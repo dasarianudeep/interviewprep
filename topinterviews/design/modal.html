@@ -1,0 +1,147 @@
+<html>
+    <head>
+        <title>Modal Dialog</title>
+        <style>
+             .modal__wrapper {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.1);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                
+                opacity: 0;
+                pointer-events: none;
+                transform: scale(1.15);
+                transition: opacity 1s, transform 1s;
+        }   
+            .modal__wrapper.open {
+                transform: scale(1);
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .modal__content {
+                max-width: 600px;
+                max-height: 60vh;
+                background-color: white;
+                padding: 20px;
+            }
+            .content__header {
+                display: flex;
+                text-align: center;
+            }
+            .modal__close {
+                margin-left: auto;
+                width: 30px;
+                height: 30px;
+            }
+            .content__footer {
+                display: flex;
+                justify-content: end;
+            }
+        </style>
+    </head>
+    <body>
+        hello World
+        <div class="modal__wrapper" id="modal" role="modal" aria-modal="true">
+            <div class="modal__content" tabindex="0">
+                <div class="content__header">
+                    This is Modal Header
+                    <button class="modal__close">X</button>
+                </div>
+                <div class="content__body">
+                    <p>Modal Content. Modal Content. Modal Content</p>
+                </div>
+                <div class="content__footer">
+                    <button>SAVE</button>
+                    <button>CANCEL</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+       class Modal {
+        constructor(element) {
+            this.element = element;
+            this.focusableElements  = this.element.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+
+            this._handleKeyDown = this.handleKeyDown.bind(this);
+            this._maintainFocus = this.maintainFocus.bind(this);
+            this._show = this.show.bind(this);
+            this._hide = this.hide.bind(this);
+            document.querySelector('.modal__close').addEventListener('click', this._hide);
+        }
+
+        show() {
+            this.isShown = true;
+            this.prevouslyFocused = document.activeElement;
+            this.element.classList.add('open');
+            //this.element.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            this.moveFocusIn();
+
+            document.body.addEventListener('keydown', this._handleKeyDown);
+            document.body.addEventListener('focus', this._maintainFocus);
+
+        }
+
+        hide() {
+            this.isShown = false;
+            if (this.prevouslyFocused && this.prevouslyFocused.focus) {
+                this.prevouslyFocused.focus();
+            }
+            
+            document.body.style.overflow = 'auto';
+            //this.element.style.display = 'none';
+            this.element.classList.remove('open');
+            
+            document.body.removeEventListener('keydown', this._handleKeyDown);
+            document.body.removeEventListener('focus', this._maintainFocus);
+            document.querySelector('.modal__close').removeEventListener('click', this._hide);
+        }
+
+        moveFocusIn() {
+            const target = this.element.querySelector('[autofocus]') || this.focusableElements[0];
+            if (target) target.focus()
+        }
+    
+
+        handleKeyDown(e) {
+            // if (!this.element.contains(event.target)) {
+            //     this.hide();
+            //     return;
+            // }
+            if (e.key === 'Escape') this.hide();
+            else if (e.key === 'Tab') this.focusTrap(event)
+        }
+
+        focusTrap(e) {
+            const firstFocusableElement = this.focusableElements[0];
+            const lastFocusableElement = this.focusableElements[this.focusableElements.length-1];
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusableElement) {
+                    lastFocusableElement.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastFocusableElement) {
+                    firstFocusableElement.focus();
+                    e.preventDefault();
+                }
+            }
+        }
+
+        maintainFocus(e) {
+            const inDialog = e.target.closed('#modal');
+            if (!inDialog) this.moveFocusIn();
+        }
+        
+           }
+
+           const modal = new Modal(document.getElementById('modal'));
+           modal.show();
+    </script>
+</html>

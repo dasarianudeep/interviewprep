@@ -1,0 +1,101 @@
+
+1.) Rendering Approach
+
+2.) Infinite Scrolling
+
+3.) Virtualized Lists
+
+4.) Code Splitting
+
+5.) Loading indicators - shimmer effect Loading
+
+6.) Preserve Scroll Feed positions
+
+7.) Error states - failed to fetch from server, No network
+
+8.) Rendering Images
+
+9.) Optimistic UI updates
+
+10.) Web accessibility
+
+11.) Internationalization
+
+12.) Bundling Optimizations
+-> The idea is to compile and serve two separate JavaScript bundles: the “regular” build, the one with 
+Babel-transforms and polyfills and serve them only to legacy browsers that actually need them, and 
+another bundle (same functionality) that has no transforms or polyfills.
+-> Tree shaking is a term commonly used within a JavaScript context to describe the removal of dead code. 
+It relies on the import and export statements to detect if code modules are exported and imported for use between 
+JavaScript files.
+-> Use splitChunks config in webpack to code split
+-> Analyze bundles - remove, replace modules  Import Cost for Visual Code
+
+
+-------------------------------------------------------------------------------------------------------------------
+Time To Interactive (TTI) is the time it takes for a page to become fully interactive after a user arrives on it.
+
+Server-side rendering - 
+*Server rendering generates full HTML for a page on the server in response to navigation.
+This avoids additional Roundtrips for data fetching and templating on the client since
+it is handled before even browser gets a response.
+
+*SSR produces a fast FP and FCP. Running page logic and rendering on server makes it possible
+to avoid send lots of JS to client, which helps to achieve a fast TTI.
+
+*SSR are by default SEO enabled
+*So users are unlikely to be left waiting for CPU bound JS to process before they can use your site.
+
+*However, Generating pages on server takes time, which can result in lower TTFB.
+
+*React developers can use renderToString()
+
+*Downsides  - It's not a silver bullet, it comes with compute overhead cost. Many SSR solutions dont flush early and 
+loweres TTFB. renderToString() in synchronous and single-threaded.
+
+*Can be improved via component caching, efficient memory management and memoization techniques.
+
+
+Client-side Rendering - 
+*CSRS means rendering page directly in the browser using JS. All logic, data fetching , templating and Routing
+are handled on clearInterval rather than server.
+
+*Client-side rendering can be difficult to get and keep fast for mobile.
+
+*CSR allows us to have SPA supporting nav without page refresh , provides great UX.
+
+*Fast TTFB, increased FCP and TTI. TTI >>> FCP
+
+*Downsides - Amount of JS required tends to grow as application grows.
+This can be extremely difficult with addition of new JS libs, polyfills, 3rd party code which compete for 
+processing power and must be processed before page's content can be rendered.
+*SEO Considerations
+*Performance - User see some lag before initial page loads when JS file is large/client doesn't have processing power
+*Data Fetching - Further worsens the load/interaction time.
+
+Improving CSR - Budgeting JS, Preload critical res, Lazy loading, Agg code splitting, app shell caching
+Caching the app shell with minimal HTML, CSS and JS powering a UI.
+
+*Aggressive code-splitting and lazy-load (server only what you need, when you need)
+
+Universal Rendering (SSR with hydration) -
+Hydration is the process of using client-side JS to add application state and interactivity by attaching event handlers
+to server-rendered HTML.
+
+StaticRendering -
+*SR means producing a seperate HTML for each URL ahead-of-time.
+SR happens at build-time and offers a fast FP,FCP  and TTI assuming amount of client-side JS is limited.
+
+
+*SR manages to achieve fast TTFB since HTML doesn't have to be generated on-the-fly.
+*With HTML responses generated in advance, SR can be deployed to multiple CDNs to leverage edge-caching.
+
+*Downsides - Individual HTML files must be generated for every possible URL.
+This is challenging or impossible when you cant predict URLs ahead of time or sites with large no of unique pages.
+
+*Maintaining a large number of HTML files can be challenging.
+
+*An SSG site needs to be built and re-deployed every time the content changes. 
+The content displayed may be stale if the site has not been built + deployed after any content change. 
+This makes SSG unsuitable for highly dynamic content.
+

@@ -1,0 +1,394 @@
+*Controlled components refer to components that have their state and behavior controlled by the parent component.
+These components rely on props passed down from the parent component to update their state and behavior.
+*Controlled components have the advantage of being more predictable and easier to debug because the state is 
+ controlled by the parent component. 
+
+
+*Uncontrolled components refer to components that manage their own state internally.
+They use a ref to access the DOM element's current value and update the state accordingly.
+*On the other hand, uncontrolled components are simpler to implement, but they can be more 
+difficult to track and manage in larger projects. They are also harder to test as the internal state is not exposed.
+
+
+*Context provides a way to pass data through the component tree without having to pass props down 
+manually at every level.
+ 
+ 
+
+So the process of re-rendering over the server rendered HTML markup is referred to as hydration.
+If you call ReactDOM.hydrate() on a node that already has this server-rendered markup, 
+React will preserve it and only attach event handlers, allowing you to have a very performant first-load experience.
+
+
+'useCallback' - 
+
+React Hook that lets you cache a function between rerenders.
+useCallback(orderDetails => {
+    post(productid, referrer);
+}, [productid, referrer]);
+
+Caching a function with useCallback  is only valuable in a few cases:
+
+*You pass it as a prop to a component wrapped in memo. You want to skip re-rendering if the value hasn’t changed. 
+Memoization lets your component re-render only if dependencies changed.
+
+*The function you’re passing is later used as a dependency of some Hook. For example, 
+another function wrapped in useCallback depends on it, or you depend on this function from useEffect.
+
+1.) Skipping Rerendering of components
+--------------------------------------
+import { memo, useCallback } from 'react';
+const ShippingForm = memo(function ShippingForm(onSubmit) {
+
+});
+
+function Product({ productid, referrer}) {
+    const handleSubmit = useCallback(id => {
+        post(productid, referrer);
+    }, [productid, referrer]);
+
+    return (
+        <ShippingForm onSubmit={handleSubmit} />
+    )
+}
+
+2.)Updating state from a memoized callback 
+----------------------------------------------
+function TodoList() {
+  const [todos, setTodos] = useState([]);
+
+  const handleAddTodo = useCallback((text) => {
+    const newTodo = { id: nextId++, text };
+    setTodos(todos => [...todos, newTodo]);
+  }, []); // No need for depencies
+  }
+
+  3.)Preventing an Effect from firing too often 
+------------------------------------------------
+
+
+  const createOptions = useCallback(() => {
+    return {
+      serverUrl: 'https://localhost:1234',
+      roomId: roomId
+    };
+  }, [roomId]); // ✅ Only changes when roomId changes
+
+  useEffect(() => {
+    const options = createOptions();
+    const connection = createConnection();
+    connection.connect();
+    return () => connection.disconnect();
+  }, [createOptions]);
+
+
+
+  'useMemo' -
+    React hook that lets you cache expensive calculation between re-renders.
+
+
+    1.)Skipping expensive calculations
+    ---------------------------------------
+    import {memo, useMemo} from 'react';
+    const visibleTodos = useMemo(() => filterListTods(),[ id ]);
+
+    function TodoList({ todos }) {
+        const visibleTodos = useMemo(() => filterListTodos(todos), [todos]);
+
+        return (
+            <List items={visibleTodos} />
+        )
+    }
+
+    const List = memo(function List ({ items}))
+
+    2.) Memoizing a dependency of another Hook 
+--------------------------------------------------
+    function Dropdown({ allItems, text }) {
+  const searchOptions = useMemo(() => {
+    return { matchMode: 'whole-word', text };
+  }, [text]); // ✅ Only changes when text changes
+
+  const visibleItems = useMemo(() => {
+    return searchItems(allItems, searchOptions);
+  }, [allItems, searchOptions]); // ✅ Only changes when allItems or searchOptions changes
+  // ...
+
+3.) Memoizing a function 
+-------------------------------
+function ProductPage ({ productid, referrer }) {
+    const handleSubmit = useMemo(() => {
+        return orderDetails => {
+            post(productid, referrer);
+        }
+    })
+}
+
+
+'useId' - 
+React Hook for generating unique IDs that can be passed to accessibility attributes.
+
+1.) Generating unique IDs for accessibility attributes 
+--------------------------------------------------------
+function PaswordField () {
+    const pwid = useId();
+
+    return (
+        <input aria-describedby={pwid} />
+        <p id={pwid}>hey hello </p>
+    )
+}
+
+2.)Generating IDs for several related elements 
+--------------------------------------------------
+function App() {
+    const id = useId();
+
+    return (
+        <div>
+            <input id={id} />
+            <label htmlFor={id} />
+            </div>
+    )
+}
+
+3.)Specifying a shared prefix for all generated IDs 
+
+
+
+'useRef' - 
+React Hook that lets you reference a value that's not needed for rendering.
+
+* You can store any data between rerenders.
+* Changing it does not trigger rerender.
+* Data in local to each copy of your component.
+
+dont read/write during rerendering; read/write only in event handlers and effects.
+
+1.)Referencing a value with a ref 
+-----------------------------------
+
+function StopWatch () {
+    const intervalId = useRef();
+    //...
+
+    intervalId.current = 'hey';
+    const id = intervalId.current;
+}
+
+2.)Manipulating the DOM with a ref 
+------------------------------------
+
+const inputRef = useRef(null);
+<input ref={inputRef} />
+inputRef.current.focus();
+
+3.)Avoiding recreating the ref contents 
+------------------------------------------
+
+ const playerRef = useRef(null);
+  if (playerRef.current === null) {
+    playerRef.current = new VideoPlayer();
+  }
+
+const Input = forwardRef((props, ref) => {
+    return <input ref={ref} {...props} />
+});
+
+function App() {
+    const ele = useRef(null);
+
+    return (
+        <Input ref={ele} />
+    )
+}
+
+
+
+'useContext' -
+React Hook that lets you read and subcribe to context from your component.
+
+Usecases - Theming, Current account, Routing, Managing state
+
+
+1.)Passing data deeply into the tree 
+--------------------------------------
+const theme = useContext(ThemeContext);
+
+<ThemeContext.Provide value={'dark'}>
+
+///
+</ThemeContext.Provider>
+
+2.)Updating data passed via context 
+--------------------------------------
+
+3.)Specifying a fallback default value 
+---------------------------------------
+
+const TasksDispatchContext = createContext(null);
+
+export function TasksProvider({ children }) {
+  const [tasks, dispatch] = useReducer(
+    tasksReducer,
+    initialTasks
+  );
+
+  return (
+    <TasksContext.Provider value={tasks}>
+      <TasksDispatchContext.Provider value={dispatch}>
+        {children}
+      </TasksDispatchContext.Provider>
+    </TasksContext.Provider>
+  );
+}
+
+
+
+'useState' - 
+React Hook that lets you add a state variable to your component
+
+useState(initialState);
+
+Returns: [currentState, setFunction to update with new state and trigger render]
+
+*The set function only updates the state variable for the next render. If you read the state variable after 
+calling the set function, you will still get the old value that was on the screen before your call.
+
+*If the new value you provide is identical to the current state, as determined by an Object.is comparison, 
+React will skip re-rendering the component and its children. This is an optimization. 
+Although in some cases React may still need to call your component before skipping the children,
+ it shouldn’t affect your code.
+
+ *React batches state updates. It updates the screen after all the event handlers have run and have 
+ called their set functions. This prevents multiple re-renders during a single event.
+
+ 1.)Adding state to a component 
+---------------------------------
+import { useState } from 'react';
+
+const [age, setAge] = useState(20);
+Calling the set function does not change the current state in the already executing code:
+
+function handleClick() {
+  setName('Robin');
+  console.log(name); // Still "Taylor"!
+}
+
+const nextCount = count + 1;
+setCount(nextCount);
+
+console.log(count);     // 0
+console.log(nextCount); 
+
+2.)Updating state based on the previous state 
+-----------------------------------------------
+function handleClick() {
+  setAge(age + 1); // setAge(42 + 1)
+  setAge(age + 1); // setAge(42 + 1)
+  setAge(age + 1); // setAge(42 + 1)
+}
+However, if you do multiple updates within the same event, updaters can be helpful. 
+
+3.)Avoiding recreating the initial state 
+------------------------------------------
+  const [todos, setTodos] = useState(createInitialTodos()); XXX
+  const [todos, setTodos] = useState(createInitialTodos); Correct
+
+4.)Resetting state with a key 
+-------------------------------
+
+5.)Storing information from previous renders 
+-----------------------------------------------
+
+
+
+'useEffect' - 
+React Hooks that synchronises with an external system
+
+1.)Connecting to an external system 
+-------------------------------------
+Some components need to stay connected to the network, some browser API, or a third-party library, 
+while they are displayed on the page. These systems aren’t controlled by React, so they are called external.
+
+2.)Wrapping Effects in custom Hooks 
+--------------------------------------
+
+3.)Controlling a non-React widget 
+-------------------------------------
+Sometimes, you want to keep an external system synchronized to some prop or state of your component.
+
+4.)Fetching data with Effects 
+---------------------------------
+You can use an Effect to fetch data for your component
+
+5.)Specifying reactive dependencies
+--------------------------------------
+
+6.)Updating state based on previous state from an Effect
+-----------------------------------------------------------
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCount(c => c + 1); // ✅ Pass a state updater
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+7.)Removing unnecessary object dependencies 
+--------------------------------------------
+
+8.)Removing unnecessary function dependencies
+-----------------------------------------------
+
+9.)Displaying different content on the server and the client 
+---------------------------------------------------------------
+ useEffect(() => {
+    setDidMount(true);
+  }, []);
+
+
+
+'useReducer' - React Hooks that adds reducer to your component
+const [state, dispatch] = useReducer(reducer initialArg, initFunc);
+const [state, dispatch] = useReducer(reduce, { age: 32 });
+
+function reducer(state, action) {
+
+}
+function handleClick() {
+  dispath({ type: 'increment_age' });
+}
+*state is read-only; always return new objects from the reducer
+
+Render Props Cons - A prop on the component, where the value is function returning JSX
+1.) Callback hell
+2.) Deep component nesting.
+
+HOC Cons - A function that receieves a component and return a new component
+1.) Static methods are not copied over.
+2.) Refs are not passed through.
+3.) If you use HOC in the render method, the entire subtree is remounted each time
+4.) Name collision among the props
+5.) When you have multiple composed HOCs all passing props to the element that is wrapped in between them,
+it is difficult to figure out which HOC is responsible for which prop.
+
+Compound components are just a set of components that work together to perform a tasks
+sharing a implict state and handle logic together.
+
+Redux vs Context API:
+----------------------
+when to use redux - 
+*App has large amount of state being used in many components, state updated frequently, logic to update state complex
+Powerful devtools support
+
+when to use Context -  ideal for sharing global data - loggedIn user, theme, user language, personalised data
+Builtin React, require minimal setup and config, ideal for static data which does not update frequently
+Code is well maintaned since UI logic and state management are seperated.
+
+useEffect vs useLayoutEffect:
+------------------------------
+useEffect  runs after react renders your component and ensures that your effect callback does not block browser painting
+
+useLayoutEffect This runs synchronously immediately after React has performed all DOM mutations. 
+This can be useful if you need to make DOM measurements or make visual changes to UI

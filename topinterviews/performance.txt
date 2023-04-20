@@ -1,0 +1,108 @@
+How do you analyze Web application Performance
+
+1.) Analyze Network Tab - 
+Large assets - JS, images
+Long running requests - manually defer code exec setTimeout(() => {}, 0), Web Workers, scheduler postTask,
+ requestIdleCallback
+postTask() allows for finer-grained scheduling of tasks, and is one way to help the 
+browser prioritize work so that low priority tasks yield to the main thread
+Identify large blocking resources, lazyload
+Ensure assets are gzipped
+Ensure no duplicate assets are downloaded.
+
+2.) Analyze DOM Content - <=1500
+ A large DOM can increase memory usage, cause longer style calculations, and produce costly layout reflows
+
+ 3.) Analyze Application Bundles
+ webpack-bundle-analyzer
+ 
+ CORE WEB VITALS (CWV) - Standard metrics from Google to measure UX of webpage. It measure different aspects of UX - 
+ loading, interactivity and visual stability.
+ Field (RUM) - data collected from real users visting the website - CRUX reports, PSI, GSC
+ Lab - data collected in a controlled environment with predefined device and network settings - Lighthouse
+
+
+CLS - Measures how much layout shifts unexpectedly when user lands on your page. (<=0.1)
+
+Causes - 
+
+*Images without dimensions: always include w and h attrs on image/video. or AR. Browser allocates correct space in
+the document which loading.
+*Ads/embeds/iframes without dimensions: website inserts ad containers dynamically/site resizes ad container
+Statically reserve space for ad slot (min-height), placeholders and avoid collapsing space when no ad content is returned
+*Dynamic Content: Avoid inserting new content above existing unless in response to user interaction.
+If you want to display, reserver sufficent space in viewport in advance.
+Replace the old content with new content in fixedsize container / load content offscreen  and show as overlay.
+*Web Fonts causing FOIT/FOUT: <link rel="preload" ..../>, font-display: optional
+if performance is priority: font-display: optional
+If displaying text quickly is a top priority, but you want to still ensure the web-font is used: font-display: swap
+
+LCP - Measures the time from when page starts loading to when large text block or image element is rendered.
+
+1.)TTFB - The time from when the user starts initiating the load until browser receives 1st byte from HTML
+2.)RLD - Time diff b/n TTFB and when browser starts loading LCP resource.
+3.)RLT - Time it takes to load LCP resource
+4.)ERD - Time diff between when LCP resource finishes loading until LCP element is rendered.
+
+Resource Load Delay - 
+Goal in this step is to ensure LCP resource starts loading asap.
+    Optimise resource discovery - LCP element is <img> element in initial markup. If BG image, preload in HTML markup
+If it is dynamically injected via JS(CSR/lazyloading), Preload the image with high priority
+<link rel="preload" fetchpriority="high" as="image" href="/path/to/hero-image.webp" type="image/webp">
+    Optimise resource priority - 
+    <img fetchpriority="high" src="/path/to/hero-image.webp">
+
+Resource Load Time -  reduce size, reduce distance the resource has to travel, eliminate network time entirely
+    Reduce size - Serve responsive images
+     The webpage shouldn't serve images that are larger than the version that's rendered on viewport.
+    <img src="flower-large.jpg" srcset="flower-small.jpg 480w, flower-large.jpg 1080w" sizes="50vw">
+                - Serve modern next-gen formats - .webp, .avif
+                - Compress images
+    Reduce distance - CDNs, image CDNs which also reduce size simultaneously
+    Eliminate Network Time - data URL; longer delays due to decode cost
+
+ Element Render Delay - 
+ Goal in this step is to render immediately LCP element as soon as it finishes loading.
+    Reduce or  inline RB Stylesheets - inline styles or reduce stylesheet size (remove unused CSS, defer non-critical css)
+    <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    Defer or inline scripts - Dont add scripts without async, defer attr in head section
+    Reduce JS size - analyse bundles and remove unused modules, replace heavy libraries with light weight alternatives
+                    defer JS loading via code splitting on demand
+
+
+Reduce TTFB - <800ms
+    Optimise server processing times, DB queries, avoid multiple page redirects, use CDN to cut response time.
+
+    CDNs - Brotli compression, TLS 1.3 (33% vs 1.2), HTTP/2(multiplexing, header compression), HTTP/3 (HOL blocking, 1.3)
+            Minification, Image Optimization
+
+
+
+LOAD 3RD PARTY SCRIPTS - 
+
+*Use async,defer attributes on script tags
+*Establish early connections - dns-prefetch, preconnect
+*Lazy load embedded videos,media
+*Avoid scripts that pollute the global scope
+*Use CDNs
+*Sub resource integrity 
+    Subresource Integrity (SRI) is a security feature that enables browsers to verify that resources they
+     fetch (for example, from a CDN) are delivered without unexpected manipulation. 
+     It works by allowing you to provide a cryptographic hash that a fetched resource must match.
+
+For embedded media -
+*Only HTTPS
+*Consider sandbox attr on iframe
+*CSP
+
+LOAD FONTS - 
+
+*Preconnect to 3rd party origins.
+*Use modern WOFF2 format
+*font-display: optional
+    Informs the browser how it should proceed with text rendering when the associated web font has not loaded.
+
+CRITICAL RENDERING PATH -
+Bytes => Characters => Tokens => Nodes => DOM/CSSOM construction
+RenderTree - used to compute the layout of each visible element and serves as an input to the paint process that 
+            renders the pixels to screen. 

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Infinite Carousel - JS</title>
+    <style>
+        .carouselWrapper {
+            position: relative;
+            height: 400px;
+            width: 600px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .carouselContainer {
+            width: 100%;
+            height: 100%;
+        }
+        .slide {
+            height: 100%;
+            width: 100%;
+            color: white;
+            background-color: black;
+            font-size: 54px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .carouselNavButton {
+            position: absolute;
+            background-color: lightgray;
+            cursor: pointer;
+            color: white;
+        }
+        .carouselNavButton__left {
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+        }
+        .carouselNavButton__right {
+            top: 50%;
+            transform: translateY(-50%);
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+   <div id="app">
+
+   </div>
+<script>
+    const data = [1,2,3,4,5];
+    const appRoot = document.getElementById('app');
+
+    const carouselWrapper = document.createElement('div');
+    carouselWrapper.classList.add('carouselWrapper');
+    appRoot.appendChild(carouselWrapper);
+
+    const carouselContainer = document.createElement('div');
+    carouselContainer.classList.add('carouselContainer');
+    carouselWrapper.appendChild(carouselContainer)
+
+    const letfNavButton = document.createElement('button');
+    letfNavButton.innerText = '<';
+    letfNavButton.classList.add('carouselNavButton', 'carouselNavButton__left');
+    letfNavButton.addEventListener('click', function() {
+        const lastChild = carouselContainer.removeChild(carouselContainer.lastElementChild);
+        carouselContainer.prepend(lastChild);
+    });
+
+    const rightNavButton = document.createElement('button');
+    rightNavButton.innerText = '>';
+    rightNavButton.classList.add('carouselNavButton', 'carouselNavButton__right');
+    rightNavButton.addEventListener('click', function() {
+        const firstChild = carouselContainer.removeChild(carouselContainer.firstElementChild);
+        carouselContainer.appendChild(firstChild);
+    });
+
+    for (let d of data) {
+        const slide = document.createElement('p');
+        slide.innerText = d;
+        slide.classList.add('slide');
+        carouselContainer.appendChild(slide);
+    }
+    carouselWrapper.appendChild(letfNavButton);
+    carouselWrapper.appendChild(rightNavButton);
+</script>
+</body>
+</html>

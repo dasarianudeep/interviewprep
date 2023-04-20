@@ -1,0 +1,521 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+            .color-light {
+                color: #929A9F;
+            }
+            .color-dark {
+                color: #263640;
+            }
+            .mt-10 {
+                margin-top: 10px;
+            }
+            .mt-30 {
+                margin-top: 30px;
+            }
+            .mt-40 {
+                margin-top: 40px;
+            }
+            .pv-30 {
+                padding: 30px 0;
+            }
+            .end-align {
+                text-align: end;
+            }
+            .right-border {
+                border-right: 1px solid rgba(38, 54, 64, 0.15);
+            }
+            .bottom-border {
+                border-bottom: 1px solid rgba(38, 54, 64, 0.15);
+            }
+            .clamp-width {
+                max-width: 800px;
+            }
+            .text-xs {
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 14px;
+            }
+            .text-xs-bold {
+                font-weight: 700;
+                font-size: 14px;
+                line-height: 20px;
+            }
+            .text-sm {
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 28px;  
+            }
+            .text-sm-bold {
+                font-weight: 700;
+                font-size: 16px;
+                line-height: 28px;  
+            }
+            .text-md {
+                font-weight: 400;
+                font-size: 18px;
+                line-height: 28px;
+            }
+            .text-lg-bold {
+                font-weight: 700;
+                font-size: 32px;
+                line-height: 45px;
+            }
+            .text-xl-bold {
+                font-weight: 600;
+                font-size: 40px;
+                line-height: 40px;
+            }
+            .upper-text {
+                text-transform: uppercase;
+            }
+            body {
+                margin: 0;
+                font-family: sans-serif;
+            }
+            main {
+                width: 1080px;
+                margin: 0 auto;
+                position: relative;
+            }
+            .top-margin {
+                margin-top: 100px;
+            }
+            .bottom-margin {
+                margin-bottom: 100px;
+            }
+            .short-top-margin {
+                margin-top: 50px;
+            }
+            .description {
+                max-width: 770px;
+            }
+            .split-wrapper {
+                display: flex;
+                flex-basis: 50%;
+            }
+            .split-wrapper > div {
+                flex-grow: 1;
+            }
+            .hero-content > *{
+                max-width: 415px;
+            }
+            .hero-cta {
+                display: inline-block;
+                position: relative;
+                text-decoration: none;
+                background-color: #f3993e;
+                color: #ffffff;
+                border-radius: 6px;
+                height: 48px;
+                line-height: 48px;
+                padding-left: 20px;
+                padding-right: 50px;
+            }
+            .hero-cta::after {
+                border: solid white;
+                display: inline-block;
+                position: absolute;
+                content: " ";
+                border-width: 0 3px 3px 0;
+                padding: 3px;
+                top: 50%;
+                transform: rotate(-45deg) translateY(-50%);
+                margin-left: 20px;
+            }
+            .carousel-inner {
+                list-style: none;
+                padding: 0;
+                overflow: hidden;
+                width:445px;
+                height: 565px;
+            }
+            .carousel-content {
+                position: relative;
+            }
+            .carousel-controls {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 30%;
+                right: 0
+            }
+            .carousel-nav {
+                position: relative;                
+                -webkit-appearance: none;
+                appearance: none;
+                display: inline-block;
+                font-weight: 700;
+                font-size: 12px;
+                line-height: 20px;  
+                background-color: #ffffff;
+                border: none;
+                color: #c4c4c4;
+                cursor: pointer;
+            }
+            .carousel-nav::after {
+                content: '.';
+                position: absolute;
+                font-weight: 700;
+                font-size: 12px;
+                color: #C4C4C4;
+                top: -15%;
+                right: -15px;
+            }
+            .carousel-nav.active {
+                color: #263640;
+            }
+            .carousel-nav.active::before {
+                content: ' ';
+                position: absolute;
+                width: 3px;
+                height: 20px;
+                top: 0;
+                right: -15px;
+                background-color: #FF9900;
+            }
+            .carousel-nav.active::after {
+                content: none;
+            }
+            .image-gallery-wrapper {
+                display: flex;
+                column-gap: 30px;
+            }
+            .vertical-center {
+                display: flex;
+                align-self: center;
+            }
+            .stacked-gallery {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                row-gap: 30px;
+            }
+            .image-gallery {
+                max-width: 100%;
+                height: auto;
+                border-radius: 12px;
+            }
+            .metrics-wrapper {
+                display: flex;
+                width: 315px;
+            }
+            .metrics-content {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+            }
+            .accordion-wrapper {
+                width: 515px;
+                list-style: none;
+                padding: 0;
+            }
+            .accordion-title {
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+                
+            }
+            .accordion-description {
+                overflow: hidden;
+                max-height: 0;
+                transition: max-height 1s;
+                margin: 0;
+                font-weight: 400;
+                font-size: 16px;
+l               line-height: 26px;
+            }
+            .accordion {
+                cursor: pointer;
+                opacity: 0.2;
+            }
+            .accordion.open  {
+                opacity: 1;
+            }
+            .accordion.open .accordion-description {
+                max-height: 500px;
+            }
+            .rightarrow-icon {
+                position: absolute;
+                transform: rotate(45deg);
+                top: 10px;
+                left: -25px;
+                width: 6px;
+                height: 6px;
+                display: inline-block;
+                border: 1px solid #FF9900;
+                border-left: 0;
+                border-bottom: 0;
+                display: none;
+            }
+            .rightarrow-icon::after {
+                content: '';
+                position: absolute;
+                width: 10px;
+                height: 1px;
+                background-color: #FF9900;
+                transform: rotate(-45deg);
+                right: 0px;
+                top: 0px;
+                transform-origin: top right;
+            }
+            .minus-icon {
+                width: 12px;
+                height: 1px;
+                background-color: #263640;
+            }
+            .minus-icon::after {
+                content: '';
+                position: absolute;
+                width: 10px;
+                height: 1px;
+                background-color: #263640;
+                transform: rotate(90deg);
+                right: 1px;
+                opacity: 0;
+                transition: opacity 1s;
+            }
+            .accordion.open .minus-icon::after {
+                opacity: 1;
+            }
+            .accordion.open .rightarrow-icon {
+                display: block;
+            }
+            .circles-wrapper {
+                display: flex;
+                gap: 10px;
+                position: absolute;
+                bottom: -1%;
+                left: -12%
+            }
+            .circle-col {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .circle-col > div {
+                width: 20px;
+                height: 20px;
+                background-color: #F1F6F9;
+                border-radius: 50%;
+            }
+            .concentric-outer-two {
+                position: absolute;
+                top: 50%;
+                right: -3%;
+                background-color: rgba(111, 169, 196, 0.1);
+                width: 105px;
+                height: 105px;
+                border-radius: 50%;
+            }
+            .concentric-inner-two {
+                position: relative;
+                background-color: #ffffff;
+                top: 20%;
+                left: 20%;
+                width: 60%;
+                height: 60%;
+                border-radius: 50%;
+            }
+            .concentric-outer-one {
+                position: absolute;
+                top: 35%;
+                left: -25%;
+                background-color: rgba(111, 169, 196, 0.1);
+                width: 165px;
+                height: 165px;
+                border-radius: 50%
+            }
+            .concentric-inner-one {
+                position: relative;
+                background-color: #ffffff;
+                top: 20%;
+                left: 20%;
+                width: 60%;
+                height: 60%;
+                border-radius: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <section class="split-wrapper top-margin">
+                <div class="hero-content">
+                    <h1 class="text-xs-bold upper-text color-light">Lorem Ipsum Dolor</h1>
+                    <h2 class="text-lg-bold color-dark">Lorem ipsum dolor sit amet,est mollis everititur ut,</h2>
+                    <p class="text-sm color-light">Lorem ipsum dolor sit amet,est mollis everititur ut, clita
+                        utinam quaeque ad sed, an legere concludaturque eum.
+                        Duo omnis solet dissentiet te,ea sed quis erat
+                        reprehundunt,cetero consetetur philosophia mel in.
+                    </p>
+                    <div class="hero-cta-wrapper">
+                        <a href="https://www.verkada.com" class="hero-cta">Learn More</a>
+                    </div>
+                </div>
+                <div class="carousel-content">
+                    <ul class="carousel-inner">
+                        <li class="carousel-item">
+                            <img src="https://verkadahome.s3.amazonaws.com/Hero_img1.png" />
+                        </li>
+                        <li class="carousel-item">
+                            <img src="https://verkadahome.s3.amazonaws.com/Hero_img2.jpeg" />
+                        </li>
+                        <li class="carousel-item">
+                            <img src="https://verkadahome.s3.amazonaws.com/Hero_img3.jpeg" />
+                        </li>
+                    </ul>
+                    <div class="carousel-controls">
+                        <button data-slide="0" class="carousel-nav active">01</button>
+                        <button data-slide="1" class="carousel-nav mt-40">02</button>
+                        <button data-slide="2" class="carousel-nav mt-40">03</button>
+                    </div>
+                </div>
+            </section>
+            <section class="top-margin clamp-width">
+                <h1 class="text-lg-bold color-dark">Wissenswertes</h1>
+                <p class="text-sm color-light">Integer massa urna, senectus maecens in dapibus urna amet hendreit. In ipsum, morbi amet aenean. laculis
+                    donec sem nullam nunc condimentum nisl non gravida in
+                </p>
+            </section>
+            <section class="split-wrapper short-top-margin bottom-margin">
+                <div class="image-gallery-wrapper">
+                    <div class="vertical-center">
+                        <img class="image-gallery" src="https://verkadahome.s3.amazonaws.com/gallery_img1.png" />
+                    </div>
+                    <div class="stacked-gallery">
+                        <img class="image-gallery" src="https://verkadahome.s3.amazonaws.com/gallery_img2.png" />
+                        <img class="image-gallery" src="https://verkadahome.s3.amazonaws.com/gallery_img3.png" />
+                    </div>
+                </div>
+                <div>
+                    <div class="metrics-wrapper">
+                        <div class="metrics-content right-border">
+                            <span class="text-xl-bold color-dark">2260</span>
+                            <span class="mt-10 text-xs color-light">Integer massa</span>
+                        </div>
+                        <div class="metrics-content end-align">
+                            <span class="text-xl-bold color-dark">2260</span>
+                            <span class="mt-10 text-xs color-light">Integer massa</span>
+                        </div>
+                    </div>
+                    <div class="mt-30">
+                        <ul class="accordion-wrapper">
+                            <li class="accordion pv-30 bottom-border open color-dark">
+                                <div class="accordion-content">
+                                    <div class="accordion-title text-md">
+                                        <div class="rightarrow-icon"></div>
+                                        Bewirb dich bei uns massa
+                                        <div class="minus-icon"></div>
+                                    </div>
+                                    <p class="accordion-description text-sm ">
+                                        Integer massa urna, senectus maecenas in dapibus urna amet hendrerit. 
+                                        In ipsum, morbi amet aenean. Iaculis donec sem nullam nunc condtum.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="accordion pv-30 bottom-border">
+                                <div class="accordion-content">
+                                    <div class="accordion-title text-md">
+                                        <div class="rightarrow-icon"></div>
+                                        Morbi amet aenean
+                                        <div class="minus-icon"></div>
+                                    </div>
+                                    <p class="accordion-description text-sm ">
+                                        Integer massa urna, senectus maecenas in dapibus urna amet hendrerit. 
+                                        In ipsum, morbi amet aenean. Iaculis donec sem nullam nunc condtum.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="accordion pv-30 bottom-border">
+                                <div class="accordion-content">
+                                    <div class="accordion-title text-md">
+                                        <div class="rightarrow-icon"></div>
+                                        Nunc condimentum nis
+                                        <div class="minus-icon"></div>
+                                    </div>
+                                    <p class="accordion-description text-sm">
+                                        Integer massa urna, senectus maecenas in dapibus urna amet hendrerit. 
+                                        In ipsum, morbi amet aenean. Iaculis donec sem nullam nunc condtum.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div class="circles-wrapper">
+                <div class="circle-col">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <div class="circle-col">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="concentric-outer-one">
+                <div class="concentric-inner-one">
+                </div>
+            </div>
+            <div class="concentric-outer-two">
+                <div class="concentric-inner-two">
+                </div>
+            </div>f
+        </main>
+    <script>
+        document.querySelector('.accordion-wrapper').addEventListener('click', function(e) {
+            if (e.target.closest('.accordion-title')) {
+                Array.from(document.querySelectorAll('.accordion')).forEach(acc => {
+                    acc.classList.remove('open');
+                });
+                e.target.closest('.accordion').classList.add('open');
+            }
+        });
+
+        let intervalID, currentSlide = 0;
+        const slides = document.getElementsByClassName('carousel-item');
+        const navBtns = document.getElementsByClassName('carousel-nav');
+
+        function runCarousel() {
+            intervalID = setInterval(function() {
+                currentSlide = currentSlide + 1;
+                console.log(currentSlide)
+                for (let i=0; i < slides.length; i++) {
+                    slides[i].style.display = 'none';
+                    navBtns[i].classList.remove('active');
+                 }
+                 setTimeout(function() {
+                    slides[currentSlide%slides.length].style.display = 'block';
+                    navBtns[currentSlide%slides.length].classList.add('active');
+                }, 0);
+            }, 2000);
+        }
+        document.querySelector('.carousel-controls').addEventListener('click', function(e) {
+            clearInterval(intervalID);
+            const slide = e.target.dataset.slide;
+            currentSlide = +slide;
+            for (let i=0; i < slides.length; i++) {
+                slides[i].style.display = 'none';
+                navBtns[i].classList.remove('active');
+            }
+            setTimeout(function() {
+                slides[slide].style.display = 'block';
+                navBtns[slide].classList.add('active');
+            }, 0);
+            runCarousel();
+
+        });
+        runCarousel();
+    </script>    
+    </body>
+</html>

@@ -1,0 +1,13 @@
+*Event delegation is a process of using a single event listener on a parent element to manually delegate events to 
+children, rather than using event listeners on each children. event delegation takes advantage of event propagation, 
+for example, after clicking on a button, taht event will bubble up to the parent container
+
+*The event loop is a constantly running process that monitors both the callback queue and the call stack.
+If the call stack is not empty, the event loop waits until it is empty and places the next function
+ from the callback queue to the call stack. If the callback queue is empty, nothing will happen
+
+* Prototypal inheritance is a mechanism where objects can inherit properties and methods from other objects.
+Each object has a private property which holds a link to another object called its prototype. 
+That prototype object has a prototype of its own, and so on until an object is reached with null as its prototype
+
+*Closure gives you access to an outer function's scope from an inner function.
