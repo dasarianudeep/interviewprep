@@ -17,9 +17,19 @@
 
 9.) Optimistic UI updates
 
-10.) Web accessibility
+10.) Web Accessibility
 
-11.) Internationalization
+11.) Internationalization & Localization
+    *Use the lang attribute on the <html> tag.
+    *Include the locale in the URL (e.g en_US, zh_CN, etc).
+    *Webpages should use <link rel="alternate" hreflang="other_locale" href="url_for_other_locale"> to tell search engines 
+    that there is another page at the specified href with the same content but for another language/locale.
+    *Design headings, labels and buttons not to break in case of longer strings ensre you have 30% more white space to accomodate
+    *Plan for line wrap and truncation in case if it does not fit in a single line.
+    *Do not concetanate translated strings
+    * Proper formatting of numbers, currency and time.
+    * Do not put text in images to convey information is not scalable.
+
 
 12.) Bundling Optimizations
 -> The idea is to compile and serve two separate JavaScript bundles: the “regular” build, the one with 
@@ -31,7 +41,13 @@ JavaScript files.
 -> Use splitChunks config in webpack to code split
 -> Analyze bundles - remove, replace modules  Import Cost for Visual Code
 
+13.) SEO
+    *site is on HTTPS, verify you dont have duplicate versions of your web page, Fixing any crawl errors,
+    Fix broken internal and outbound links, fix HTTP Links on  HTTPS pages, mobile-friendly, SEO friendly urls,
+    Add SD, Page redirect loops, Fixing orphan pages.
+    *Correct title, meta and h1 tags.
 
+14.) Icon Rendering
 -------------------------------------------------------------------------------------------------------------------
 Time To Interactive (TTI) is the time it takes for a page to become fully interactive after a user arrives on it.
 
@@ -98,4 +114,93 @@ This is challenging or impossible when you cant predict URLs ahead of time or si
 *An SSG site needs to be built and re-deployed every time the content changes. 
 The content displayed may be stale if the site has not been built + deployed after any content change. 
 This makes SSG unsuitable for highly dynamic content.
+
+
+
+--------------------------------------------------------------------- NEWSFEED---------------------------------------------------------------
+Reqs - 
+*Browsing friends posts, Liking , commenting and sharing Posts, Create and publishing posts.
+
+GET /api/v1/feed
+
+Rendering Approach - 
+
+Interestingly, news feed applications are somewhere in-between, there's a good amount of static content but they 
+also require interaction. In reality, Facebook uses a hybrid approach which gives the best of both worlds: 
+a fast initial load with SSR then hydrating the page to enable interactions. 
+Subsequent content (e.g. more posts added once the user reaches the end of their feed) will be rendered via CSR.
+
+Infinite Scrolling - 
+
+Infinite scroll is a UX pattern where content is continuously added to the page as a user scrolls.
+
+Infinite scrolling/feed works by fetching the next set of posts when the user has scrolled to the end of their
+ current loaded feed. This results in the user seeing a loading indicator and a short delay where the user has
+  to wait for the new posts to be fetched and displayed.
+
+  2 approaches to implement - 
+  Add marker to the bottom of the feed
+*Add a scroll event listener (ideally debounced) to the page that checks whether the position of the marker element is within a certain threshold from the bottom of the page.
+*Use Intersection Observer API to monitor when the marker element is entering or exiting another element or intersecting by a specified amount.
+
+
+List Virtualization - 
+
+It is the idea of rendering only visible rows of content in a large dynamic list.
+It involves mantaining a window and moving that window around your list. More performant than ID for large list of data.
+
+Improves Browser painting as fewer DOM nodes are rendered and few layout computations are to be matchMode
+
+Code Splitting - 
+
+Code split on route level,Lazy load non-critical resources such as below-the-fold images and components like Modal
+which are only required on user intereaction.
+
+Loading Indicator - 
+
+Rather than showing just Spinner, show skeleton screens or shimmer loading effects resembling the content.
+
+Rendering Images -
+
+Optimistic Updates - 
+
+Optimistic update is a performance technique where the client immediately reflect the updated state after a 
+user interaction that hits the server and optimistically assume that the server request succeeds
+
+Icon Rendering - SVG, inline sVG which is scalable and crisp
+
+a11y - 
+Add role="feed" to parent Feeds HTML element, role="article" to each post ria-labelledby="<id>"  authorname
+Icon only buttons have aria-label 
+
+
+--------------------------------------------------------------------- AIRBNB---------------------------------------------------------------
+Reqs - 
+*Search Listings, View accomodation details and reserve
+
+User demographics, Device Support, User have to sign in?
+
+Rendering Approach - 
+SSR with hydrations since performance and SEO is important and lot of client side interaction
+
+GET /api/v1/search?size,page,guests,country,location,date,amenities
+data - check_in= &check_out= 
+
+GET /api/v1/accommodation/{accommodationId}
+
+POST /reserve body - accomodationId, dates, address_details, payment_details
+
+Peformance -
+
+    *Image Optimization - carousel images
+    *Code Splitting
+    *Preserving Search Context - 
+    *Form Optimizations - Country specific forms, autofill experience, show error messages/states, clear focus states
+    *Internationalization
+
+
+
+
+--------------------------------------------------------------------- INSTAGRAM---------------------------------------------------------------
+
 

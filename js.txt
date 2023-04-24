@@ -11,3 +11,4 @@ Each object has a private property which holds a link to another object called i
 That prototype object has a prototype of its own, and so on until an object is reached with null as its prototype
 
 *Closure gives you access to an outer function's scope from an inner function.
+

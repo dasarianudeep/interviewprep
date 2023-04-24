@@ -1538,3 +1538,30 @@ function stringify(data) {
     return `{${arr.join(',')}}`;
   }
 }
+
+function getTags(node) {
+  const tags = new Set();
+
+  const stack = [node];
+
+  while (stack.length) {
+    const ele = stack.shift();
+    tags.add(ele.tagName.toLowerCase());
+    stack.push(...ele.children);
+  }
+
+  return [...tags];
+}
+
+function promisify(func) {
+  return function(...args) {
+    return new Promise((resolve, reject) => {
+      const callback = (err, data) {
+        if (err) reject(err);
+        else resolve(data);
+      };
+
+      func.call(this, ...args, callback);
+    })
+  }
+}

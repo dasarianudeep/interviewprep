@@ -1,3 +1,4 @@
+
 How do you analyze Web application Performance
 
 1.) Analyze Network Tab - 
@@ -31,7 +32,7 @@ the document which loading.
 *Ads/embeds/iframes without dimensions: website inserts ad containers dynamically/site resizes ad container
 Statically reserve space for ad slot (min-height), placeholders and avoid collapsing space when no ad content is returned
 *Dynamic Content: Avoid inserting new content above existing unless in response to user interaction.
-If you want to display, reserver sufficent space in viewport in advance.
+If you want to display, reserve sufficent space in viewport in advance.
 Replace the old content with new content in fixedsize container / load content offscreen  and show as overlay.
 *Web Fonts causing FOIT/FOUT: <link rel="preload" ..../>, font-display: optional
 if performance is priority: font-display: optional
@@ -106,3 +107,67 @@ CRITICAL RENDERING PATH -
 Bytes => Characters => Tokens => Nodes => DOM/CSSOM construction
 RenderTree - used to compute the layout of each visible element and serves as an input to the paint process that 
             renders the pixels to screen. 
+
+
+
+*Adaptive Loading on mobile - connection aware 
+*Offline - SW 
+
+
+
+----------------------------NEWSFEED-----------------------------------
+
+Fanout on write. With this approach, news feed is pre-computed during write time. 
+A new post is delivered to friends’ cache immediately after it is published.
+
+Pros:
+
+The news feed is generated in real-time and can be pushed to friends immediately.
+
+Fetching news feed is fast because the news feed is pre-computed during write time.
+
+Cons:
+
+If a user has many friends, fetching the friend list and generating news feeds for all of them are
+ slow and time consuming. It is called hotkey problem.
+
+For inactive users or those rarely log in, pre-computing news feeds waste computing resources.
+
+Fanout on read. The news feed is generated during read time. This is an on-demand model. 
+Recent posts are pulled when a user loads her home page.
+
+Pros:
+
+For inactive users or those who rarely log in, fanout on read works better because it will not waste computing resources on them.
+
+Data is not pushed to friends so there is no hotkey problem.
+
+Cons:
+
+Fetching the news feed is slow as the news feed is not pre-computed.
+
+
+We adopt a hybrid approach to get benefits of both approaches and avoid pitfalls in them.
+ Since fetching the news feed fast is crucial, we use a push model for the majority of users.
+  For celebrities or users who have many friends/followers, we let followers pull news content on-demand to 
+  avoid system overload. 
+
+  ------------------------------------------------------------------------------------------------------------
+  IS vs Pagination - 
+  IS is best suited when used jus wants to explore with large amount on UGC.
+  Pagination is suiteable for goal-oriented apps when the user searches for a specific piece of content.
+
+  IS Pros - User Engagement (reduces bounce rate), Scroll is better than click, offers good UX for  Mobile 
+  IS Cons - Performance, SEO, Item search and location, browse endlessely not knowing the end of the content,same
+            scrollbar is deceptive, no footer, relatively hard to implement IS than pagination
+Pagination Pros - Good conversion, Sense of control, Item Location
+Pagination Cons - Extra actions
+
+-----------------------------------------------------------------------------------------------------------------
+GraphQL vs REST
+1.)GraphQL APIs have a strongly typed schema
+2.) Developers often describe the major benefit of GraphQL with the fact that clients can retrieve exactly the data
+ they need from the API. They don’t have to rely on REST endpoints that return predefined and fixed responses.
+ 3.)RAPID Product Iteration - 
+ 4.)Composing GraphQL APIs
+ 5.)
