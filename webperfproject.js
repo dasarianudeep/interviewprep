@@ -11,7 +11,7 @@
 
    Among those metrics, LCP and CLS are the most that affects  the speed of the page.
    LCP - Measures the time from when page starts loading to when large text block or image element is rendered.
-   CLS - Measures how much the page layout shifts unexpectedly when user lands on your page. (<=0.1)
+   CLS - Measures how much the page layout shift.s unexpectedly when user lands on your page. (<=0.1)
 
    So, improving the LCP and CLS has been the primary goal for me as part of the Performance Initiative.
 
@@ -19,9 +19,6 @@
    Testing & Monitoring and setting Performance Budgets
 
    ***ASSET OPTIMIZATION - 
-    1.) We moved to Brotli for text Compression - open source lossless data format. Brotli is more effective than Gzip
-    reducing HTML,JS, CSS size by 20%. Brotli is widely supported in all modern browsers and all major CDNs support
-    it out-of-the box.
     2.) We employed Responsive images by using srcset sizes and using <picture> element.
     Especially for pages with a heavy media footprint, we tookstep further with adaptive media loading by serving 
     low-quality images and videos on slow networks, blocking third-party scripts on slower devices.
@@ -57,6 +54,9 @@
     5.) Predictive fetching 
 
     ***DELIVERY OPTIMIZATION - 
+     1.) We moved to Brotli for text Compression - open source lossless data format. Brotli is more effective than Gzip
+    reducing HTML,JS, CSS size by 20%. Brotli is widely supported in all modern browsers and all major CDNs support
+    it out-of-the box.
     1.) Using defer to load critical javascript to avoid render-blocking resources.
     2.) Lazy load BTF expensive components with IntersectionObserver (load YT only on user scroll) and priority hints.
     3.) For image heavy pages, we initially load LQ or blurry images first and replace with actual image .
