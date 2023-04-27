@@ -171,3 +171,172 @@ GraphQL vs REST
  3.)RAPID Product Iteration - 
  4.)Composing GraphQL APIs
  5.)
+
+ ------------------------------------------------ CACHING STRATEGIES ---------------------------------------------
+ CACHE-ASIDE: Read Heavy workloads
+ Pros -
+ *Systems using cache-aside strategy are resilient to cache failures.
+ Cons - 
+ *Ensuring data consistency is challenging due to the lack of atomic operations on cache and storage.
+ *Always a cache miss for the first time and increased latency.
+
+ READ-THROUGH: Read Heavy workloads
+ Pros -
+ *The application only needs to read from the cache, simplifying the application code.
+ Cons - 
+ *The system cannot tolerate cache failures, as the cache plays a crucial role in the data retrieval process.
+ *The cache and storage systems must share the same data model, limiting the flexibility in handling diff use cases.
+
+ Similar to cache-aside, data consistency can pose challenges in a read-through strategy. 
+ If the data in the storage is updated after being cached, inconsistencies may arise.
+
+ WRITE-THROUGH: Write Heavy
+ In this write strategy, data is first written to the cache and The cache updates the data in the main database
+ Pros -Data is always available in cache and wont result in 'cache miss'.
+Cons - Increased write latency.
+
+WRITE-AROUND: 
+The application writes data directly to storage system and then 1.)write k,v to cache 2.)invalidate cache 3.)Do ntng (ttl)
+
+WRITE-BACK: Write Heavy
+similar to write-through,with the primary diff being that write operations to the storage system are asynchronous.
+
+Pros - Reduced write latency than write-through
+Cons - Data inconsistency between cache and database.
+If the cache fails before writing data to the storage, the latest updated records may be lost, 
+which is not acceptable in some scenarios. To mitigate the risk of data loss due to cache failures,
+ cache systems can persist write operations on the cache side. When the cache restarts, 
+ it can replay the unfinished operations to recover the cache and write data to the storage system. 
+
+ Cache busting - Specify diff versions of file, fingerprinting or adding query parameters
+
+
+ Sync vs Async Communication - 
+ -----------------------------
+ Sync - Low performance,  Tight coupling, Hard to scale when u have high traffic,
+ Async - Loosely coupled, Resilient - Decoupled services work independently and failure in one doesn’t cause a
+  failure in another. The client of the service won’t be immediately affected. This makes it easier to 
+  achieve high-availability of mission-critical systems.
+
+ REST API Design Guidelines -
+ ------------------------------ 
+ Designing the Spec - how API structure should look like?
+ Define endponts, available operations,outling input parameters and output parameters, describing auth methods
+ Postman collections
+ Documentation
+
+ Versioning - Only when u have a backward-incompatible platform change, API is no more extendable,out-of-date spec
+ Swagger - intuitive API Designer, API Console, API Documentation, Mocking Service
+ intuitive way to visually design your APIs
+
+ URI versioning, Query parameter, Custom header - Accept-version:v1, Accept header
+ Accept: application/vnd.example.v1+json
+
+ API authentication -
+ *API key - Simple to implement, identification only, long-lived
+ *Oauth2 - Authorization grant flow, client-credentials flow (no user authentication)
+ *SAML - open standard for exchanging auth and authorization between IDP and SP.
+
+
+Desigining the resources - 
+
+ URL's should be nouns, Content-Types
+
+Caching - Cache-Control Header
+
+HTTP Response Code - 1xx - Informational, 2xx - Successful, 3xx - Redirection, 4xx - Client, 5xx - Service
+
+HTTP Error Handling - 
+{	
+"error":	{	
+"code":	400,	
+"message":	"The	user	was	missing	required	fields",
+"errors":	[{	
+"domain":	"global",	
+"reason":	"MissingParameter",	
+"message":	"User	first	name	cannot	be	empty",	
+"locationType":	"parameter",	
+"location":	"firstName",	
+"extendedHelp":	
+"http://docs.domain.ext/users/post"	
+},
+
+
+Securing APIs -  SQL Injection, XSS, DDOS, MITM
+Auth
+Throttling and rate limiting allow you to prevent abuse of your API, and
+ensure that your API withstands large numbers of calls
+Validating and Sanitising input parameters
+Log request and response activity, Conducting Pen Testing
+Practice the principle of least privilege, Encrypt traffic using TLS
+Tokenization
+
+CORS
+IP Whitelisting
+JSON Threat protection - policy to validate a JSON request body by specifying limits for various JSON structures
+maxEntries, maxArraySize, maxDepth, maxNameLength, maxValueLength
+
+
+Analytics - 
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+Availability - Availability is the percentage of time that some service  is accessible to clients and is operated upon
+ under normal conditions.
+
+ Reliability - R measures how the service performs under varying operating conditions.
+ MTBF - total Uptime / Total Failures
+ MTTR - Total maintenace time / Total Repairs
+
+Scalability is the ability of a system to handle an increasing amount of workload without compromising performance.
+
+Fault tolerance refers to a system’s ability to execute persistently even if one or more of its components fail
+
+How to design for Scale and HA -
+--------------------------------
+*No SPOF, Design a multi-zone architecture by distribuitng pool of services across mul zones with date replication,
+load balancing and automated failover between zones.
+*Replicate data across regions for DR i case of regional outage.
+*Design mult-region architecture for resilience to regional outages.
+*Enable Auto-scaling in VMs, DBs -  sharding.
+*Degrade service levels gracefully when overloaded -  Services should detect overload and return lower quality 
+responses to the user or partially drop traffic, not fail completely under overload.
+*Prevent and mitigate traffic spikes - throttling, queueing, circuit breaking, graceful degradation, prioritizing critical requests.
+*Fail safe - If there's a failure due to a problem, the system components should fail in a way that allows the 
+overall system to continue to function
+*Design API calls and operational commands to be retryable - Idempotent actions
+*Minimize Cirtical Dependencies - increase redunancy, use asyn processing(queue, pubsub)
+*Ensure that every change can be rolled back
+
+
+SQL vs NoSQL - 
+SQ - Structured Data, Strict Schema, Relational Data, Need for complex joins, TXNS, Date Integrity, Vertical scaling
+NoSQL - Schemaless, unstructured or semi-structured data
+
+---------------------------------------WEB SECURITY---------------------------------------------------------------
+CORS - 
+
+SOP blocks reading a resource from a different origin.SOP tells the browser to block cross-origin requests.
+1.) Browser => Service "Origin" header
+2.) Service => Browser "Access-Control-Allow-Origin" header
+Share Credentials in CORS
+fetch(url, {mode: 'cors', credentials: 'include'});
+Access-Control-Allow-Origin must be set to a specific origin (no *) and must set Access-Control-Allow-Credentials to true.
+
+The CORS specification defines a complex request as
+
+*A request that uses methods other than GET, POST, or HEAD
+*A request that includes headers other than Accept, Accept-Language or Content-Language
+*A request that has a Content-Type header other than application/x-www-form-urlencoded, multipart/form-data, or text/plain
+
+Server response can also include an "Access-Control-Max-Age" header to specify the duration to cache preflight results 
+
+CSRF - 
+
+CSRF Mitigation -
+*Accepting only JSON Content-Type - no way for a simple <form> to send JSON
+*Disable CORS - Only allow OPTIONS, GET, HEAD
+*Check the referrer header
+*GET should not have side effects
+*CSRF Tokens

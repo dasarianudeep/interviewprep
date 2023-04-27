@@ -201,6 +201,54 @@ Peformance -
 
 
 
---------------------------------------------------------------------- INSTAGRAM---------------------------------------------------------------
+---------------------------------------------INSTAGRAM---------------------------------------------------------------
 
 
+--------------------------------------------------URL SHORTENER----------------------------------------------------
+
+Requirements - 
+URL shortening and URL redirecting
+
+API -
+POST - /api/v1/shorten body - longUrl
+GET - /api/v1/<short>
+
+a.)Encode actual URL - base62(sha(url))
+Cons - Key duplication, To avoid add some random string/timestamp and hash
+
+b.)Generate Keys Offline - KGS
+
+----------------------------------------------Hotel Reservation System---------------------------------------------
+Pessimistic locking [6], also called pessimistic concurrency control, prevents simultaneous updates by placing a 
+lock on a record as soon as one user starts to update it. Other users who attempt to update the record have to
+ wait until the first user has released the lock (committed the changes).
+
+ Optimistic Locking
+
+ ----------------------------------------------Payment System---------------------------------------------
+Func Reqs - 
+*What payment options are available? CC
+*Do we hadle payments ourselelves? NO - 3rd party Stripe, BrainTree
+*Is application global
+*Do we need both Pay-in and Pay-out flow?
+*
+
+APIs -
+POST /api/v1/payments
+body - {buyer_info: json, checkout_id: int, credit_card_info:json, payment_orders: [],is_payment_done: bool}
+payment_order - {seller_account: string, amount: int, currency: string, payment_order_id:int, payment_order_status:string,
+ledger_updated: bool, wallet_updated: bool,checkout_id: fk}
+
+GET /api/v1/payments/:id
+This endpoint returns the execution status of a single payment order based on payment_order_id.
+
+Double-entry ledger system
+
+
+To avoid handling credit card information, companies use hosted credit card pages provided by PSPs. 
+For websites, it is a widget or an iframe, while for mobile applications, it may be a pre-built page 
+from the payment SDK.
+
+Retry queue - retryable errors such as transient errors
+DLQ -  if a message fails repeatedly, it eventually lands in the dead letter queue. A dead letter queue is useful 
+for debugging and isolating problematic messages for inspection to determine why they were not processed successfully.

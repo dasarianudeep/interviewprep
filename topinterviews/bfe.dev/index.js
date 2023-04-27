@@ -1565,3 +1565,13 @@ function promisify(func) {
     })
   }
 }
+
+function hightlightText (s, query) {
+  const idx = s.indexOf(query);
+
+  if (idx > -1) {
+    return s.substring(0, idx) + '<strong>' + s.substring(idx, idx+query.length) + '</strong>' + s.substring(idx+query.length);
+  }
+
+  return '';
+}
