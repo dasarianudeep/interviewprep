@@ -262,3 +262,35 @@ var findMedianSortedArrays = function(nums1, nums2) {
 
   return (arr[mid]+arr[mid-1])/2;
 };
+
+function multiplyStrings(a, b) {
+    // any zero
+    if ([a, b].includes(`0`)) {
+        return `0`
+    }
+
+    // get length of a, b
+    const [lenA, lenB] = [a.length, b.length]
+
+    // set nums for calculate
+    let nums = Array(lenA + lenB).fill(0), index = nums.length - 1
+
+    // reverse loop from a
+    for (let i = lenB - 1; i >= 0; i--) {
+        let key = index--
+
+        // reverse loop from b
+        for (let j = lenA - 1; j >= 0; j--) {
+            const v = +a[j] * +b[i] + nums[key]
+
+            // current
+            nums[key] = v % 10
+            // carry
+            key--;
+            nums[key] += Math.floor(v / 10)
+        }
+    }
+
+    // remove `0` noneed
+    return nums.join('').replace(/^0+/, '')
+}

@@ -1575,3 +1575,86 @@ function hightlightText (s, query) {
 
   return '';
 }
+
+function classNames(...args) {
+  const classes = [];
+
+  args.forEach((arg) => {
+    // Ignore falsey values.
+    if (!arg) {
+      return;
+    }
+
+    const argType = typeof arg;
+
+    // Handle string and numbers.
+    if (argType === 'string' || argType === 'number') {
+      classes.push(arg);
+      return;
+    }
+
+    // Handle arrays.
+    if (Array.isArray(arg)) {
+      classes.push(classNames(...arg));
+      return;
+    }
+
+    // Handle objects.
+    if (argType === 'object') {
+      for (const key in arg) {
+        if (Object.hasOwn(arg, key) && arg[key]) {
+          classes.push(key);
+        }
+      }
+
+      return;
+    }
+  });
+
+  return classes.join(' ');
+}
+
+function squashObject(object, path = [], output = {}) {
+  for (const [key, value] of Object.entries(object)) {
+    if (typeof value !== 'object' || value === null) {
+      output[path.concat(key).filter(Boolean).join('.')] = value;
+    } else {
+      squashObject(value, path.concat(key), output);
+    }
+  }
+
+  return output;
+}
+
+function chunk(array, size = 1) {
+  const length = array == null ? 0 : array.length;
+  if (!length || size < 1) {
+    return [];
+  }
+
+  const result = [];
+
+  for (let i = 0; i < array.length; i += size) {
+    const chunk = array.slice(i, i + size);
+    result.push(chunk);
+  }
+
+  return result;
+}
+
+function difference(array, values) {
+  const result = [];
+
+  // Create a set of all the values in the values arrays
+  const valuesSet = new Set(values.flat());
+
+  for (let i = 0; i < array.length; i++) {
+    const value = array[i];
+    // Check if the value is in the values set
+    if (!valuesSet.has(value) && !(value === undefined && !(i in array))) {
+      result.push(value);
+    }
+  }
+
+  return result;
+}

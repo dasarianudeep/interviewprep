@@ -76,3 +76,12 @@
      webpack which has performance features that will notify you when assets exceed specified limits.
     Bundlesize, allows you to define and run file size checks in your continuous integration (CI) pipeline.
  */
+
+  
+    Why did u use Lambda?
+    *Reduce engineering costs by paying only for the resources u use.
+    *Ideal for short tasks and smalled execution time.
+    *Delegat infra management to AWS
+    *Lambda charges by the number of requests served, and by the length of time it takes to execute code
+     while EC2 charges for every second the instance is running.
+     *

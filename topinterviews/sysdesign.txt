@@ -5,6 +5,11 @@
 
 3.) Virtualized Lists
 
+List virtualization, or "windowing", is the concept of only rendering what is visible to the user.
+ The number of elements that are rendered at first is a very small subset of the entire list and the
+  "window" of visible content moves when the user continues to scroll. This improves both the rendering and 
+  scrolling performance of the list.
+
 4.) Code Splitting
 
 5.) Loading indicators - shimmer effect Loading
@@ -252,3 +257,43 @@ from the payment SDK.
 Retry queue - retryable errors such as transient errors
 DLQ -  if a message fails repeatedly, it eventually lands in the dead letter queue. A dead letter queue is useful 
 for debugging and isolating problematic messages for inspection to determine why they were not processed successfully.
+
+
+--------------------------------------------------AUTOCOMPLETE---------------------------------------------------------
+*Is the matching only supported at the beginning of a search query or in the middle as well
+*How many autocomplete suggestions should the system return?
+*How does the system know which 5 suggestions to return?
+* Does the system support spell check?
+*Do we allow capitalization and special characters?
+
+Reqs: Fast reponse time, Relevant, Sorted, Scalable, HA
+
+Data gathering service -  gathers user input queries and aggregates them in real-time.
+Basic: Freq table
+Deep dive - Trie A trie is a special tree that can compactly store strings
+*Space-Efficient. If you're storing lots of words that start with similar patterns, tries may reduce the 
+overall storage cost by storing shared prefixes once
+*Efficient Prefix Queries - Tries can quickly answer queries about words with shared prefixes,
+
+The above algorithm is straightforward. However, it is too slow because we need to traverse the entire trie to 
+get top k results in the worst-case scenario
+*Limit the max length of a prefix
+*Cache top search queries at node
+To avoid traversing the whole trie, we store top k most frequently used queries at each node. 
+
+
+Scalable - 
+Users may enter billions of queries per day. 
+Updating the trie on every query significantly slows down the query service
+Top suggestions may not change much once the trie is built. Thus, it is unnecessary to update the trie frequently.
+
+Query Service - 
+
+Delete
+We have to remove hateful, violent, sexually explicit, or dangerous autocomplete suggestions.
+ We add a filter layer (Figure 14) in front of the Trie Cache to filter out unwanted suggestions
+
+ Scale the storage - 
+ If we need two servers for storage, we can store queries starting with ‘a’ to ‘m’ on the first server, and ‘n’ to ‘z’ on the second server.
+ If we need three servers, we can split queries into ‘a’ to ‘i’, ‘j’ to ‘r’ and ‘s’ to ‘z’.
+
