@@ -1,39 +1,50 @@
 
 
 
-// /*
-//     Currying is transforming a function with multiple arguments into a sequence of 
-//     functions with any number of arguments
-// curry() should return a function
-// The returned function should
-// if number of arguments matches original function, return the final result
-// otherwise return a function which expects the missing arguments, also this function needs to be curried as well.
-// */
-// function curry (fn) {
-//     return function curried (...args) {
-//         if (args.length >= fn.length) {
-//             return fn.call(this, ...args);
-//         } 
-//         //Returns a function which expects the missing arguments and also this function should be curried as well
-//         return function (...missingArsg) {
-//             return curried.call(this, ...args, ...missingArsg);
-//         }
-//     }
-// }
+/*
+    Currying is transforming a function with multiple arguments into a sequence of 
+    functions with any number of arguments
+curry() should return a function
+The returned function should
+if number of arguments matches original function, return the final result
+otherwise return a function which expects the missing arguments, also this function needs to be curried as well.
+*/
+function curry (fn) {
+    return function curried (...args) {
+        if (args.length >= fn.length) {
+            return fn.call(this, ...args);
+        } 
+        //Returns a function which expects the missing arguments and also this function should be curried as well
+        return function (...missingArsg) {
+            return curried.call(this, ...args, ...missingArsg);
+        }
+    }
+}
 
-//  function once(func) {
-//   let ran = true;
-//   let value;
+ function once(func) {
+  let ran = true;
+  let value;
 
-//   return function (...args) {
-//     if (ran) {
-//       value = func.apply(this, args);
-//       ran = false;
-//     }
-//     return value;
-//   }
-// }
+  return function (...args) {
+    if (ran) {
+      value = func.apply(this, args);
+      ran = false;
+    }
+    return value;
+  }
+}
 
+function limit(func, n) {
+  let count = 0, value;
+
+  return function(...args) {
+    if (count < n) {
+        value = func.apply(this, args);
+        count++;
+    }
+    return value;
+  }
+}
 
 // function throttle(func, wait = 0) {
 //   let shouldThrottle = false;
@@ -78,33 +89,41 @@ function throttleTrailing(fn, delay) {
   }
 }
 
-// function flat (arr, depth = 1) {
-//     const result = []
+Array.prototype.myFlat = (depth = 1) => {
+  let arr = this;
+  while (depth > 0 && this.some(Array.isArray)) {
+    arr = [].concat(this);
+    depth--;
+  }
+  return arr;
+}
+function flat (arr, depth = 1) {
+    const result = []
 
-//     for (const item of arr) {
-//         if (Array.isArray(item) && depth>0) {
-//             const flattened = flat(item, depth - 1);
-//             result.push(...flattened);
-//         } else {
-//             result.push(item);
-//         }
-//     }
-//     return result;
-// }
+    for (const item of arr) {
+        if (Array.isArray(item) && depth>0) {
+            const flattened = flat(item, depth - 1);
+            result.push(...flattened);
+        } else {
+            result.push(item);
+        }
+    }
+    return result;
+}
 
 // console.log(flat([1,2,[3,4,[5]]], 2));
 
-// function debounce(func, wait) {
-//     let timerId = null;
+function debounce(func, wait) {
+    let timerId = null;
 
-//     return function (...args) {
-//         clearTimeout(timerId);
+    return function (...args) {
+        clearTimeout(timerId);
 
-//         timerId = setTimeout(() => {
-//             func.apply(this, args);
-//         })
-//     }
-// }
+        timerId = setTimeout(() => {
+            func.apply(this, args);
+        })
+    }
+}
 
     function debounce (func, wait, option = {leading: false, trailing: true}) {
       let timerId = null;
@@ -159,17 +178,17 @@ function throttleTrailing(fn, delay) {
 //   return fn;
 // }
 
-// function pipe(fns) {
-//     return val => {
-//         return funcs.reduce((val, func) => func(val), val);
-//     }
-// }
+function pipe(fns) {
+    return val => {
+        return funcs.reduce((val, func) => func(val), val);
+    }
+}
 
-// function compose(fns) {
-//     return val => {
-//         return fns.reduceRight((val, fn) => fn(val), val);
-//     }
-// }
+function compose(fns) {
+    return val => {
+        return fns.reduceRight((val, fn) => fn(val), val);
+    }
+}
 
 // /**
 //  * Implement jQuery style $(el).css(name, value);
@@ -200,35 +219,35 @@ function throttleTrailing(fn, delay) {
 //     }
 // }
 
-// class jQuery {
-//     constructor(selector) {
-//       this.element = document.querySelector(selector);
-//     }
+class jQuery {
+    constructor(selector) {
+      this.element = document.querySelector(selector);
+    }
   
-//     css(prop, value) {
-//       // Getter case.
-//       if (value === undefined) {
-//         // No matching elements.
-//         if (this.element == null) {
-//           return undefined;
-//         }
+    css(prop, value) {
+      // Getter case.
+      if (value === undefined) {
+        // No matching elements.
+        if (this.element == null) {
+          return undefined;
+        }
   
-//         const value = this.element.style[prop];
-//         return value === '' ? undefined : value;
-//       }
+        const value = this.element.style[prop];
+        return value === '' ? undefined : value;
+      }
   
-//       // Setter case.
-//       if (this.element != null) {
-//         this.element.style[prop] = value;
-//       }
+      // Setter case.
+      if (this.element != null) {
+        this.element.style[prop] = value;
+      }
   
-//       return this;
-//     }
-//   }
+      return this;
+    }
+  }
   
-//   export default function $(element) {
-//     return new jQuery(element);
-//   }
+  export default function $(element) {
+    return new jQuery(element);
+  }
 
 // class NodeStore {
 //     constructor() {
@@ -250,36 +269,36 @@ function throttleTrailing(fn, delay) {
 //     }
 // }
 
-// function findCorrespondingNodeDFS (rootA, rootB, target) {
-//     if (rootA === target) {
-//         return rootB;
-//     }
+function findCorrespondingNodeDFS (rootA, rootB, target) {
+    if (rootA === target) {
+        return rootB;
+    }
 
-//     for (let i=0; i<rootA.children.length; i++) {
-//         const found = findCorrespondingNode(rootA.children[i], rootB.children[i], target);
-//         if (found) return found;
-//     }
-// }
+    for (let i=0; i<rootA.children.length; i++) {
+        const found = findCorrespondingNode(rootA.children[i], rootB.children[i], target);
+        if (found) return found;
+    }
+}
 
-// function findCorrespondingNodeBF (rootA, rootB, target) {
-//     if (rootA === target) return rootB;
+function findCorrespondingNodeBFS (rootA, rootB, target) {
+    if (rootA === target) return rootB;
 
-//     const queueA = [rootA];
-//     const queueB = [rootB];
+    const queueA = [rootA];
+    const queueB = [rootB];
 
-//     while (queueA.length) {
-//         const currA = queueA.shift();
-//         const currB = queueB.shift();
+    while (queueA.length) {
+        const currA = queueA.shift();
+        const currB = queueB.shift();
 
-//         if (currA === target) {
-//             return currB;
-//         }
+        if (currA === target) {
+            return currB;
+        }
 
-//         queueA.push(...currA.children);
-//         queueB.push(...currB.children);
-//     }
-//     return null;
-// }
+        queueA.push(...currA.children);
+        queueB.push(...currB.children);
+    }
+    return null;
+}
 
 // function sum(num) {
 //     function func(n) {
@@ -290,31 +309,31 @@ function throttleTrailing(fn, delay) {
 //     return func;
 // }
 
-// function mergeList (arr1, arr2) {
-//     let i=0, j=0;
-//     let result = [];
+function mergeList (arr1, arr2) {
+    let i=0, j=0;
+    let result = [];
 
-//     while (i<arr1.length && j<arr2.length) {
-//         if (arr1[i] < arr2[j]) {
-//             result.push(arr1[i++])
-//         } else if (arr1[i] > arr2[j]) {
-//             result.push(arr2[j++])
-//         } else {
-//             result.push(arr1[i++]);
-//             result.push(arr2[j++]);
-//         }
+    while (i<arr1.length && j<arr2.length) {
+        if (arr1[i] < arr2[j]) {
+            result.push(arr1[i++])
+        } else if (arr1[i] > arr2[j]) {
+            result.push(arr2[j++])
+        } else {
+            result.push(arr1[i++]);
+            result.push(arr2[j++]);
+        }
 
-//         while (i < arr1.length) {
-//             result.push(arr1[i++]);
-//         }
+        while (i < arr1.length) {
+            result.push(arr1[i++]);
+        }
 
-//         while (j < arr2.length) {
-//             result.push(arr2[j++]);
-//         }
+        while (j < arr2.length) {
+            result.push(arr2[j++]);
+        }
 
-//         return result;
-//     }
-// }
+        return result;
+    }
+}
 
 // function fib(n) {
 //     if (n <= 1) return n;
@@ -328,43 +347,43 @@ function throttleTrailing(fn, delay) {
 //     return memo[n];
 // }
 
-// function invertBinaryTree (node) {
-//     if(!node) return null;
-//     if (node.left) return invertBinaryTree(node.left);
-//     if (node.right) return invertBinaryTree(node.right);
+function invertBinaryTree (node) {
+    if(!node) return null;
+    if (node.left) return invertBinaryTree(node.left);
+    if (node.right) return invertBinaryTree(node.right);
 
-//     const temp = node.left;
-//     node.left = node.right;
-//     node.right = temp;
+    const temp = node.left;
+    node.left = node.right;
+    node.right = temp;
 
-//     return node;
-// }
+    return node;
+}
 
-// function MyObjectCreate(proto) {
-//     if (proto === null || typeof proto !== object) throw Error();
+function MyObjectCreate(proto) {
+    if (proto === null || typeof proto !== object) throw Error();
 
-//     function f() {
+    function f() {
 
-//     }
-//     f.prototype = proto;
-//     return new f();
-// }
+    }
+    f.prototype = proto;
+    return new f();
+}
 
-// function BFSDOMTraversal(root) {
-//     if (!root) return [];
-//     const result = [];
-//     const queue = [root];
+function BFSDOMTraversal(root) {
+    if (!root) return [];
+    const result = [];
+    const queue = [root];
 
-//     while (queue.length !== 0) {
-//         const current = queue.shift();
-//         result.push(current);
-//         if (current.hasChildNodes()) {
-//             result.push(...current.children);
-//         }
-//     }
+    while (queue.length !== 0) {
+        const current = queue.shift();
+        result.push(current);
+        if (current.hasChildNodes()) {
+            result.push(...current.children);
+        }
+    }
 
-//     return result;
-// }
+    return result;
+}
 
 // function firstDuplicate(nums) {
 //     const obj = {};
@@ -468,7 +487,7 @@ function IntersectionTwoSortedArrays (arr1, arr2) {
 //     // ORder and duplicates maintained
 //     let result = [];
 
-//     for (let i = 0; i<nums3.length; i++) {
+//     for (let i = 0; i<nums1.length; i++) {
 //         let val=nums2[i];
 //         if (nums1.includes(val)) {
 //             let deletedVal = nums1.splice(nums.indexOf(val), 1);
@@ -497,40 +516,40 @@ function IntersectionTwoSortedArrays (arr1, arr2) {
 //     return nums.reduce((acc, curr) => curr.filter(val => acc.includes(val)), nums[0]).sort((a,b) => a - b);
 // }
 
-// Array.prototype.myReduce = function (callbackFn, initialValue) {
-//     const noInitialValue = initialValue === undefined;
-//     const len = this.length;
+Array.prototype.myReduce = function (callbackFn, initialValue) {
+    const noInitialValue = initialValue === undefined;
+    const len = this.length;
   
-//     if (noInitialValue && len === 0) {
-//       throw new TypeError('Reduce of empty array with no initial value');
-//     }
+    if (noInitialValue && len === 0) {
+      throw new TypeError('Reduce of empty array with no initial value');
+    }
   
-//     let acc = noInitialValue ? this[0] : initialValue;
-//     let startIndex = noInitialValue ? 1 : 0;
+    let acc = noInitialValue ? this[0] : initialValue;
+    let startIndex = noInitialValue ? 1 : 0;
   
-//     for (let i = startIndex; i < len; i++) {
-//       if (Object.hasOwn(this, i)) {
-//         acc = callbackFn(acc, this[i], i, this);
-//       }
-//     }
+    for (let i = startIndex; i < len; i++) {
+      if (Object.hasOwn(this, i)) {
+        acc = callbackFn(acc, this[i], i, this);
+      }
+    }
   
-//     return acc;
-//   };
+    return acc;
+  };
 
-//   export default function get(object, path, defaultValue) {
-//     const pathParams = Array.isArray(path) ? path : path.split('.');
+  export default function get(object, path, defaultValue) {
+    const pathParams = Array.isArray(path) ? path : path.split('.');
   
-//     // let index = 0;
-//     let current = object;
+    // let index = 0;
+    let current = object;
   
-//     for ( let i = 0; i < pathParams.length; i++) {
-//       if (current === null) return defaultValue
-//       if (current[pathParams[i]] === undefined) return defaultValue;
-//       current = current[pathParams[i]];
-//     }
-//     return current;
+    for ( let i = 0; i < pathParams.length; i++) {
+      if (current === null) return defaultValue
+      if (current[pathParams[i]] === undefined) return defaultValue;
+      current = current[pathParams[i]];
+    }
+    return current;
     
-//   }
+  }
 
 //   export default function promiseRace(iterable) {
 //     /**
@@ -738,75 +757,75 @@ function IntersectionTwoSortedArrays (arr1, arr2) {
 //     return elements;
 //   }
 
-//   function isSameTree(nodeA, nodeB) {
-//     if (nodeA.nodeType !== nodeB.nodeType) {
-//       return false
-//     }
+  function isSameTree(nodeA, nodeB) {
+    if (nodeA.nodeType !== nodeB.nodeType) {
+      return false
+    }
   
-//     if (nodeA.nodeType === Node.TEXT_NODE) {
-//       return nodeA.textContent === nodeB.textContent;
-//     }
+    if (nodeA.nodeType === Node.TEXT_NODE) {
+      return nodeA.textContent === nodeB.textContent;
+    }
   
-//     if (nodeA.tagName !== nodeB.tagName) {
-//       return false
-//     }
+    if (nodeA.tagName !== nodeB.tagName) {
+      return false
+    }
   
-//     if (nodeA.childNodes.length !== nodeB.childNodes.length) {
-//       return false
-//     }
+    if (nodeA.childNodes.length !== nodeB.childNodes.length) {
+      return false
+    }
   
-//     if (nodeA.attributes.length !== nodeB.attributes.length) {
-//       return false
-//     }
+    if (nodeA.attributes.length !== nodeB.attributes.length) {
+      return false
+    }
   
-//     const hasSameAttributes = nodeA.getAttributeNames.every(attrName => {
-//       return nodeA.getAttribute(attrName) === nodeB.getAttribute(attrName);
-//     });
+    const hasSameAttributes = nodeA.getAttributeNames.every(attrName => {
+      return nodeA.getAttribute(attrName) === nodeB.getAttribute(attrName);
+    });
   
-//     if (!hasSameAttributes) {
-//       return false
-//     }
+    if (!hasSameAttributes) {
+      return false
+    }
   
-//     return Array.prototype.every.call(nodeA.childNodes, (childA, index) =>
-//       isSameTree(childA, nodeB.childNodes[index]),
-//     );
-//   }
+    return Array.prototype.every.call(nodeA.childNodes, (childA, index) =>
+      isSameTree(childA, nodeB.childNodes[index]),
+    );
+  }
 
-//   function deepClone (value) {
-//     if (typeof value !== object || value ===  null) return value;
+  function deepClone (value) {
+    if (typeof value !== object || value ===  null) return value;
 
-//     if (Array.isArray(value)) {
-//         return value.map(val => deepClone(val));
-//     }
+    if (Array.isArray(value)) {
+        return value.map(val => deepClone(val));
+    }
 
-//     const cloned = Object.entries(value).map(([k,v]) => [k, deepClone(v)]);
+    const cloned = Object.entries(value).map(([k,v]) => [k, deepClone(v)]);
 
-//     return Object.fromEntries(cloned);
-//   }
+    return Object.fromEntries(cloned);
+  }
 
 
-//   export default function deepEqual(valueA, valueB) {
-//     function isDeepCompare(type) {
-//         return type === '[object Object]' || type === '[object Array]';
-//       }
+   function deepEqual(valueA, valueB) {
+    function isDeepCompare(type) {
+        return type === '[object Object]' || type === '[object Array]';
+      }
       
-//     const type1 = Object.prototype.toString.call(valueA);
-//     const type2 = Object.prototype.toString.call(valueB);
+    const type1 = Object.prototype.toString.call(valueA);
+    const type2 = Object.prototype.toString.call(valueB);
   
-//   if (type1 === type2 && isDeepCompare(type1) && isDeepCompare(type2)) {
-//     const kvPairs1 = Object.entries(valueA);
-//     const kvPairs2 = Object.entries(valueB);
+  if (type1 === type2 && isDeepCompare(type1) && isDeepCompare(type2)) {
+    const kvPairs1 = Object.entries(valueA);
+    const kvPairs2 = Object.entries(valueB);
   
-//     if (kvPairs1.length !== kvPairs2.length) {
-//       return false;
-//     }
+    if (kvPairs1.length !== kvPairs2.length) {
+      return false;
+    }
   
-//     return kvPairs1.every(
-//       ([k,v]) => Object.hasOwn(valueB, k) && deepEqual(v, valueB[k])
-//     )
-//   }
-//     return Object.is(valueA, valueB);
-//   }
+    return kvPairs1.every(
+      ([k,v]) => Object.hasOwn(valueB, k) && deepEqual(v, valueB[k])
+    )
+  }
+    return Object.is(valueA, valueB);
+   }
 
 function semverCompare(v1, v2) {
   
@@ -875,6 +894,25 @@ function semverCompare(v1, v2) {
 
   console.log(uncompress('3(ab2(c))'));
   console.log(uncompress('3(ab)c'));
+
+  function compress (str) {
+    let compressed='', currChar='', currCount='', maxCount=1;
+    for (let i=0; i<str.length; i++) {
+      if (currChar !== str[i]) {
+        compressed = compressed+currChar+currCount;
+        maxCount = Math.max(maxCount, currCount);
+        currChar = str[i];
+        currCount = 1
+      } else {
+        currCount++
+      }
+    }
+    compressed = compressed+currChar+currCount;
+    maxCount = Math.max(maxCount, currCount);
+
+    return maxCount===1 ? str : compressed; 
+  }
+  
 
   function generateCSSSelector (el) {
     let path = [], parent;
@@ -1658,3 +1696,66 @@ function difference(array, values) {
 
   return result;
 }
+
+function model(state, element) {
+  // your code here
+  element.value = state.value;
+  Object.defineProperty(state, 'value', {
+    get() {
+      return element.value;
+    },
+    set(new_value) {
+      element.value = new_value;
+      return;
+    }
+  });
+
+  element.addEventListener('change', (event) => {
+    state.value = event.target.value;
+  })
+}
+
+/**
+ * https://jsfiddle.net/htb2d51s/1/
+ * const data = {
+  value: ''
+};
+
+const el = document.getElementById('inputEl');
+
+Object.defineProperty(data, 'prop', {
+  get: function() {
+    return this.value;
+  },
+  set: function(value) {
+    this.value = value;
+    el.value = value;
+    printVal();
+  }
+});
+
+
+// attaching the event listener on keyup events
+el.addEventListener('keyup', (event) => {
+  data.prop = event.target.value;
+});
+
+function printVal() {
+  const el = document.getElementById('val');
+  el.innerText = data.prop;
+}
+
+const btn = document.getElementById('incrementVal');
+btn.addEventListener('click', () => {
+	data.prop = Number(data.prop) + 1;
+});
+ */
+
+Function.prototype.myBind = function (thisArg, ...boundArgs) {
+  const originalMethod = this;
+
+  return function(...args) {
+    return originalMethod.apply(thisArg, [...boundArgs, ...args]);
+  }
+};
+
