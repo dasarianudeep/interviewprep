@@ -137,24 +137,37 @@ function debounce(func, wait) {
     }
 }
 
-    function debounce (func, wait, option = {leading: false, trailing: true}) {
-      let timerId = null;
-      return function() {
-        let invoked = false;
-        
-        if (!timerId && option.leading) {
-          func.apply(this, arguments);
-          invoked = true;
-        }
-        clearTimeout(timerId);
-        timerId = setTimeout(() => {
-          if (option.trailing && !invoked) {
-            func.apply(this, arguments);
-          }
-          timerId = null;
-        }, wait )
-      }
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+  	var context = this, args = arguments;
+  	clearTimeout(timeout);
+  	timeout = setTimeout(function() {
+  		timeout = null;
+  		if (!immediate) func.apply(context, args);
+  	}, wait);
+  	if (immediate && !timeout) func.apply(context, args);
+  };
+}
+
+function debounce (func, wait, option = {leading: false, trailing: true}) {
+  let timerId = null;
+  return function() {
+    let invoked = false;
+    
+    if (!timerId && option.leading) {
+      func.apply(this, arguments);
+      invoked = true;
     }
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      if (option.trailing && !invoked) {
+        func.apply(this, arguments);
+      }
+      timerId = null;
+    }, wait )
+  }
+}
 
 // function debounce(func, wait = 0) {
 //   let timeoutId = null;
