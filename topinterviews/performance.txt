@@ -168,9 +168,14 @@ GraphQL vs REST
 1.)GraphQL APIs have a strongly typed schema
 2.) Developers often describe the major benefit of GraphQL with the fact that clients can retrieve exactly the data
  they need from the API. They don’t have to rely on REST endpoints that return predefined and fixed responses.
- 3.)RAPID Product Iteration - 
- 4.)Composing GraphQL APIs
- 5.)
+ 3.)RAPID Product Iteration - GraphQL exposes a single endpoint that allows you to access multiple resources.
+ 4.)GraphQL simplifies the task of aggregating data from multiple sources or APIs and then resolving the data 
+ to the client in a single API call. On the other hand, API technologies like REST would require multiple HTTP 
+ calls to access data from multiple sources
+ 5.) No Caching in GraphQL
+ 6.) Error handling in REST is easier when compared to GraphQL.
+ 7.) N+1 query problem-
+ where a client application calls the server N+1 times to fetch one collection resource + N child resources
 
  ------------------------------------------------ CACHING STRATEGIES ---------------------------------------------
  CACHE-ASIDE: Read Heavy workloads
@@ -340,3 +345,31 @@ CSRF Mitigation -
 *Check the referrer header
 *GET should not have side effects
 *CSRF Tokens
+
+
+Web Sockets vs SSE vs Long-Polling
+------------------------------------
+
+WS - allows bi-directional communication between cliet and server. Transmit both binary and text data.
+Pros - Reduced resource utilization since persistent connection is established.
+
+Cons - WS do not automatically recover when connections are terminated. 
+Some firewalls block WS connections.
+Require good upfront work to enable.
+No HTTP headers from Server are passed; reduced data payload
+You can't leverage caching like HTTP - Intermediate/Edge caching
+
+SSE - Mono-directional(server-to-client) and transported over simple HTTP protocol. Builtin support for reconnection
+Event IDs
+No firewall issues
+Ideal for  live-stocks base apps, Subs to Twitter feed, Receiving live sports score, News update and alternatives
+
+Cons - SSE suffers from a limitation to the maximum  of 6 open connections, which can be especially
+ painful when opening multiple tabs, as the limit is per browser and is set to a very low number 
+ Lacks extensiblity
+ Does not support binary data.
+
+
+ Long Polling - 
+Pros - Simple to implement,based on HTTP. It works in every browser and environment.
+ Cons - Higher latency, Resource intensive Creates new connection each time, which can be intensive on the server.

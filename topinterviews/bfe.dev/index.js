@@ -89,6 +89,18 @@ function throttleTrailing(fn, delay) {
   }
 }
 
+function throttle(func, timeFrame) {
+  var lastTime = 0;
+  return function (...args) {
+      var now = new Date();
+      if (now - lastTime >= timeFrame) {
+          func(...args);
+          lastTime = now;
+      }
+  };
+}
+
+
 Array.prototype.myFlat = (depth = 1) => {
   let arr = this;
   while (depth > 0 && this.some(Array.isArray)) {
