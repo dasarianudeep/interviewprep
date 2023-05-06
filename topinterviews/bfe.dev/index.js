@@ -109,6 +109,11 @@ Array.prototype.myFlat = (depth = 1) => {
   }
   return arr;
 }
+
+const flattenDeep = (arr) => Array.isArray(arr)
+  ? arr.reduce( (a, b) => a.concat(flattenDeep(b)) , [])
+  : [arr]
+
 function flat (arr, depth = 1) {
     const result = []
 
@@ -508,6 +513,55 @@ function IntersectionTwoSortedArrays (arr1, arr2) {
   return result;
 }
 
+const array = [0, 1, 2, 3, 4]
+const random = arr => {
+  const len = arr == null ? 0 : arr.length
+  return len ? arr[Math.floor(Math.random() * len)] : undefined
+}
+
+const partial = (func, ...boundArgs) => (...remainingArgs) => func(...boundArgs, ...remainingArgs)
+
+// Native
+const has = function (obj, key) {
+  var keyParts = key.split('.');
+
+  return !!obj && (
+    keyParts.length > 1
+      ? has(obj[key.split('.')[0]], keyParts.slice(1).join('.'))
+      : hasOwnProperty.call(obj, key)
+  );
+};
+
+var object = { a: 1, b: 'settings' };
+var result = has(object, 'a');
+
+//lodash omit -
+
+// Underscore/Lodash
+var result = _.omit(object, ['a', 'c']);
+console.log(result)
+// output: { 'b': '2' }
+
+// Native
+var { a, c, ...result2 } = object;
+console.log(result2)
+// output: { 'b': '2' }
+
+// Native
+function pick(object, keys) {
+  return keys.reduce((obj, key) => {
+     if (object && object.hasOwnProperty(key)) {
+        obj[key] = object[key];
+     }
+     return obj;
+   }, {});
+}
+var result = pick(object, ['a', 'c']);
+console.log(result)
+// output: {a: 1, c: 3}
+
+
+
 // function intersectionTwoArraysII(nums1, nums2) {
 //     // ORder and duplicates maintained
 //     let result = [];
@@ -540,6 +594,23 @@ function IntersectionTwoSortedArrays (arr1, arr2) {
 // function Intersection2DArray(nums) {
 //     return nums.reduce((acc, curr) => curr.filter(val => acc.includes(val)), nums[0]).sort((a,b) => a - b);
 // }
+
+//Returns an array that is the intersection of all the arrays. Each value in the result is present in each of the arrays.
+
+var arrays = [[1, 2, 3], [101, 2, 1, 10], [2, 1]];
+console.log(arrays.reduce(function(a, b) {
+  return a.filter(function(value) {
+    return b.includes(value);
+  });
+}));
+
+// Native JS
+const array = [1, 2, 3, 1, 2, 3];
+function pull(arr, ...removeList){
+    var removeSet = new Set(removeList)
+    return arr.filter(function(el){
+        return !removeSet.has(el)
+  
 
 Array.prototype.myReduce = function (callbackFn, initialValue) {
     const noInitialValue = initialValue === undefined;
@@ -1524,6 +1595,38 @@ function removeDuplicateObjFromArray() {
   uniqueArray = Array.from(uniqueSet).map(JSON.parse);
     
   console.log(uniqueArray);
+}
+
+const seen = new Set();
+const uniqueAuthors = data.filter(item => {
+  const duplicate = seen.has(item.tweet.author.id);
+  seen.add(item.tweet.author.id);
+  return !duplicate;
+});
+
+const uniqueAuthors = data.filter((value, index, self) =>
+  index === self.findIndex((t) => (
+    t.tweet.author.id === value.tweet.author.id
+  ))
+)
+
+const unique = [];
+for (const item of arr) {
+  const isDuplicate = unique.find((obj) => obj.location === item.location);
+  if (!isDuplicate) {
+    unique.push(item);
+  }
+  
+const inRange = (num, a, b=0) => (Math.min(a,b) <= num && num < Math.max(a,b));
+
+function randomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+function randomNumberInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 const uniqueAuthors = data.reduce((accumulator, current) => {
