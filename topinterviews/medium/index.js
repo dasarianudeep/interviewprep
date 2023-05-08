@@ -161,7 +161,6 @@ function reverseInteger (x) {
     while (x !== 0) {
         reversed = (reversed*10) + (x%10);
         x = Math.floor(x/10);
-        if (reversed > Infinity || reversed < -Infinity) return 0;
     }
 
     return negative ? -reversed : reversed;
@@ -294,3 +293,55 @@ function multiplyStrings(a, b) {
     // remove `0` noneed
     return nums.join('').replace(/^0+/, '')
 }
+
+var permute = function(nums) {
+    var res = [];
+
+    var dfs = (curr, rest) => {
+        if (rest.length === 0) {
+            res.push(curr);
+            return;
+        }
+
+        for (let i=0; i<rest.length; i++) {
+            dfs([...curr, rest[i]], [...rest.slice(0,i),...rest.slice(i+1)])
+        }
+    }
+
+    dfs([], nums);
+    return res;
+};
+
+// My Calendar I
+var MyCalendar = function() {
+    this.bookings = []
+};
+
+MyCalendar.prototype.book = function(start, end) {
+    for (let booking of this.bookings) {
+        if (booking[0]<end && booking[1]>start) return false;
+    }
+    this.bookings.push([start, end]);
+    return true;
+};
+
+var addTwoNumbers = function(l1, l2) {
+    
+    const result = new ListNode(0);
+    let carry = 0, sum = 0;
+
+    while (l1 || l2) {
+        const sum = (l1 ? l1.val : 0) + (l2 ? l2.val : 0) + carry;
+        result.next = new ListNode(sum >= 10 ? sum%10 : sum);
+        carry = sum>=10 ? Math.floor(sum/10) : 0;
+        l1 = l1 ? l1.next : null;
+        l2 = l2 ? l2.next : null;
+        result = result.next;
+    }
+
+    if (carry > 0) {
+        result.next = new Listnode(carry);
+    }
+
+    return result.next;
+};

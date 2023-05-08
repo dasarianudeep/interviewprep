@@ -330,7 +330,7 @@ var maximumPopulation = function(logs) {
           population++;
         }
       }
-      if (population !==0 && max < population) {
+      if (population !==0 && population > max) {
           max = population;
           year = i
       }

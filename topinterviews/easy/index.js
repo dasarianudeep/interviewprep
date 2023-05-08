@@ -513,3 +513,38 @@ var topKFrequent = function(nums, k) {
     return res;
 };
 
+var firstUniqChar = function(str){
+    var freq = Array(26).fill(0);
+    for(var s of str){
+        const idx = s.charCodeAt()-97;
+        freq[idx]+=1;
+    }
+    for(var i=0; i<str.length; i++){
+        const idx = str[i].charCodeAt()-97;
+        if(freq[idx] === 1) return i;
+    }
+    return -1;
+}
+
+
+var addStrings = function (num1, num2) {
+    let i = num1.length - 1;
+    let j = num2.length - 1;
+    let sum = [];
+    let carry = 0;
+	
+    while (i >= 0 || j >= 0 || carry) {
+        let n1 = num1[i] || 0;
+        let n2 = num2[j] || 0;
+
+        let curSum = parseInt(n1) + parseInt(n2) + carry;
+        let reminder = curSum % 10;
+        sum.unshift(reminder);
+        carry = curSum >= 10 ? 1 : 0;
+		
+        j--;
+        i--;
+    }
+    return sum.join("");
+};
+

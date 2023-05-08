@@ -1,10 +1,19 @@
 
 1.) Rendering Approach
 
-2.) Infinite Scrolling
+2.) Infinite Scrolling - 
+Infinite scroll is a UX pattern where content is continuously added to the page as a user scrolls.
 
-3.) Virtualized Lists
+Infinite scrolling/feed works by fetching the next set of posts when the user has scrolled to the end of their
+ current loaded feed. This results in the user seeing a loading indicator and a short delay where the user has
+  to wait for the new posts to be fetched and displayed.
 
+  2 approaches to implement - 
+  Add marker to the bottom of the feed
+*Add a scroll event listener (ideally debounced) to the page that checks whether the position of the marker element is within a certain threshold from the bottom of the page.
+*Use Intersection Observer API to monitor when the marker element is entering or exiting another element or intersecting by a specified amount.
+
+3.) Virtualized Lists -
 List virtualization, or "windowing", is the concept of only rendering what is visible to the user.
  The number of elements that are rendered at first is a very small subset of the entire list and the
   "window" of visible content moves when the user continues to scroll. This improves both the rendering and 
@@ -21,8 +30,21 @@ List virtualization, or "windowing", is the concept of only rendering what is vi
 8.) Rendering Images
 
 9.) Optimistic UI updates
+Optimistic update is a performance technique where the client immediately reflect the updated state after a 
+user interaction that hits the server and optimistically assume that the server request succeeds
 
 10.) Web Accessibility
+*keyboard Nav - Arrange elements in the DOM to be in logical order, Correctly set the visibility of offscreen content
+*Use semantic HTML elements
+*Use heading to create structually outline for urs page, Use landmark tags to define major sections of your page,
+bypass repetitive content with skip links
+*If you're building custom interactive components, use the tabindex attribute to ensure that they're keyboard accessible.
+*Label documents, alt texts for images, Label links and buttons, label form-elements
+*Add captions or screen reader descriptions to a web video using <track /> tag
+*U should ensure that interactive elements like buttons or links are large enough, and have enough space around them
+48*48px, spaced 8px v and h
+*Color Contast ratio - 4.5:1 and 3:1 for larger text
+*Avoid Content Reordering - Make sure source order and visual order are same.
 
 11.) Internationalization & Localization
     *Use the lang attribute on the <html> tag.

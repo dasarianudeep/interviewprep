@@ -1301,7 +1301,8 @@ function memoizeOne(func) {
 
 
 const composeAsync = funcs => x => funcs.reduce((acc, val) => acc.then(val), Promise.resolve(x));
-
+// https://levelup.gitconnected.com/understand-javascript-promises-by-building-a-promise-from-scratch-84c0fd855720
+// https://leetcode.com/discuss/interview-question/691075/Amazon-Frontend-SDE2
 class MyPromise {
   #state;
   #result;
@@ -1616,7 +1617,7 @@ for (const item of arr) {
   if (!isDuplicate) {
     unique.push(item);
   }
-  
+
 const inRange = (num, a, b=0) => (Math.min(a,b) <= num && num < Math.max(a,b));
 
 function randomNumber(min, max) {
@@ -1887,3 +1888,71 @@ Function.prototype.myBind = function (thisArg, ...boundArgs) {
   }
 };
 
+
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay || 500)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [value, delay])
+
+  return debouncedValue;
+}
+
+
+// Fixing Race Conditions - useEffect fetch
+// https://sebastienlorber.com/handling-api-request-race-conditions-in-react
+// https://maxrozen.com/race-conditions-fetching-data-react-with-useeffect
+useEffect(() => {
+  let active = true;
+
+  const fetchData = async () => {
+    setTimeout(async () => {
+      const response = await fetch(`https://swapi.dev/api/people/${props.id}/`);
+      const newData = await response.json();
+      if (active) {
+        setFetchedId(props.id);
+        setData(newData);
+      }
+    }, Math.round(Math.random() * 12000));
+  };
+
+  fetchData();
+  return () => {
+    active = false;
+  };
+}, [props.id]);
+
+
+useEffect(() => {
+  const abortController = new AbortController();
+
+  const fetchData = async () => {
+    setTimeout(async () => {
+      try {
+        const response = await fetch(`https://swapi.dev/api/people/${id}/`, {
+          signal: abortController.signal,
+        });
+        const newData = await response.json();
+
+        setFetchedId(id);
+        setData(newData);
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          // Aborting a fetch throws an error
+          // So we can't update state afterwards
+        }
+        // Handle other request errors here
+      }
+    }, Math.round(Math.random() * 12000));
+  };
+
+  fetchData();
+  return () => {
+    abortController.abort();
+  };
+}, [id]);
