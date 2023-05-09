@@ -372,4 +372,50 @@ Cons - SSE suffers from a limitation to the maximum  of 6 open connections, whic
 
  Long Polling - 
 Pros - Simple to implement,based on HTTP. It works in every browser and environment.
- Cons - Higher latency, Resource intensive Creates new connection each time, which can be intensive on the server.
+Cons - Higher latency, Resource intensive Creates new connection each time, which can be intensive on the server.
+
+
+MOBILE OPTIMIZATIONS - 
+
+*Your site should have big and easy clickable buttons. 
+*Responsive web design
+*Compress images
+*People use mobile devices of diff screen sizes. When designing a user interface, customize it for diff screen resolutions 
+using Media Queries
+*You might have elements on your website that won’t convert well to mobile devices - Identify non-mobile friendly feat.
+*Disable Pop-ups 
+*Never use Flash
+*Navigation bars and tab bars take space on the page, and work well when the number of navigation options is small.
+*Hamburger menus accommodate a large number of options, but these options are less discoverable.
+*Use shorter sentences and therefore shorter paragraphs.
+*Use easy-to-use CTA buttons to the bottom of the page.
+*Images -choose right image format, fine detail than highes res - PNG or lossless webp, are u optimizing A
+photo or a similar image asset - JPEG or lossy Webp 
+*Prefer vector formats: vector images are resolution and scale independent, which makes them a perfect fit for the multi-device and high-resolution world.
+*Serve scaled images: resize images and ensure that the "display" size is as close as possible to the "natural" size of the image. 
+*<img src="flower-large.jpg" srcset="flower-small.jpg 480w, flower-large.jpg 1080w" sizes="50vw">
+*Lazy load images in browser 
+*Image CDNs specialize in the transformation, optimization, and delivery of images. 
+You can also think of them as APIs for accessing and manipulating the images used on your site.
+*Consider using a "fetchpriority" attribute value of "high" on the LCP image element so that the browser can
+ begin loading that image as soon as possible.
+ *If an image is not immediately discoverable in the initial HTML, consider using a rel=preload hint for your
+  LCP candidate image so that the browser can load that image ahead of time.
+
+
+LOAD 3RD PARTY SCRIPTS - 
+
+*Use async,defer attributes on script tags
+*Establish early connections - dns-prefetch, preconnect
+*Lazy load embedded videos,media
+*Avoid scripts that pollute the global scope
+*Use CDNs
+*Sub resource integrity 
+    Subresource Integrity (SRI) is a security feature that enables browsers to verify that resources they
+     fetch (for example, from a CDN) are delivered without unexpected manipulation. 
+     It works by allowing you to provide a cryptographic hash that a fetched resource must match.
+
+For embedded media -
+*Only HTTPS
+*Consider sandbox attr on iframe
+*CSP

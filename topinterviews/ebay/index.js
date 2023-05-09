@@ -65,6 +65,18 @@ var fib = function(n) {
 
 console.log(fib(4));
 
+var printFib = function(n) {
+    let n1=0,n2=1, count=0;
+
+    while (count < n) {
+        console.log(n1);
+        let n3 = n1+n2;
+        n1=n2;
+        n2=n3;
+        count++;
+    }
+}
+
 var tribonacci = function(n) {
     let arr = new Array(n + 1).fill(0);
     arr[0] = 0;
