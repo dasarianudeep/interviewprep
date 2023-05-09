@@ -1,13 +1,13 @@
 https://leetcode.com/discuss/interview-question/742791/Front-End-Interview-Questions
 
-1.) Rendering Approach
-Server-side rendering - 
+1.) RENDERING
+SSR - Fast Initial load,SEO / Heavy server load, Slower transition of pages
 *Server rendering generates full HTML for a page on the server in response to navigation.
 This avoids additional Roundtrips for data fetching and templating on the client since
 it is handled before even browser gets a response.
 *SSR produces a fast FP and FCP. Running page logic and rendering on server makes it possible
 to avoid send lots of JS to client, which helps to achieve a fast TTI.
-*SSR are by default SEO enabled
+*SSR are by default SEO friendly
 *So users are unlikely to be left waiting for CPU bound JS to process before they can use your site.
 *However, Generating pages on server takes time, which can result in lower TTFB.
 *React developers can use renderToString()
@@ -15,7 +15,7 @@ to avoid send lots of JS to client, which helps to achieve a fast TTI.
 loweres TTFB. renderToString() in synchronous and single-threaded.
 *Can be improved via component caching, efficient memory management and memoization techniques.
 
-Client-side Rendering - 
+CSR - Minimal Server load, Subsequent rendering after initial Load is fast / Poor SEO, Longer Initial Load time
 *CSRS means rendering page directly in the browser using JS. All logic, data fetching , templating and Routing
 are handled on clearInterval rather than server.
 *Client-side rendering can be difficult to get and keep fast for mobile.
@@ -37,10 +37,36 @@ Universal Rendering (SSR with hydration) -
 Hydration is the process of using client-side JS to add application state and interactivity by attaching event handlers
 to server-rendered HTML.
 
-2.) Infinite Scrolling - 
-Infinite scroll is a UX pattern where content is continuously added to the page as a user scrolls.
+StaticRendering -
+*SR means producing a seperate HTML for each URL ahead-of-time.
+SR happens at build-time and offers a fast FP,FCP  and TTI assuming amount of client-side JS is limited.
 
-Infinite scrolling/feed works by fetching the next set of posts when the user has scrolled to the end of their
+*SR manages to achieve fast TTFB since HTML doesn't have to be generated on-the-fly.
+*With HTML responses generated in advance, SR can be deployed to multiple CDNs to leverage edge-caching.
+
+*Downsides - Individual HTML files must be generated for every possible URL.
+This is challenging or impossible when you cant predict URLs ahead of time or sites with large no of unique pages.
+
+*Maintaining a large number of HTML files can be challenging.
+
+*An SSG site needs to be built and re-deployed every time the content changes. 
+The content displayed may be stale if the site has not been built + deployed after any content change. 
+This makes SSG unsuitable for highly dynamic content.
+
+STREAMING SERVER RENDERING - 
+ Instead of generating one large HTML file containing the necessary markup for the current navigation, 
+ we can split it up into smaller chunks! Node streams allow us to stream data into the response object,
+  which means that we can continuously send data down to the client.
+   The moment the client receives the chunks of data, it can start rendering the contents.
+
+INCREMENTAL STATIC GENERATION - 
+Next.js allows you to create or update static pages after you’ve built your site.
+ Incremental Static Regeneration (ISR) enables developers and content editors to use static-generation on a 
+ per-page basis, without needing to rebuild the entire site. 
+
+2.) INFINITE SCROLLING, PAGINATION - 
+*Infinite scroll is a UX pattern where content is continuously added to the page as a user scrolls.
+*Infinite scrolling/feed works by fetching the next set of posts when the user has scrolled to the end of their
  current loaded feed. This results in the user seeing a loading indicator and a short delay where the user has
   to wait for the new posts to be fetched and displayed.
 
@@ -49,12 +75,21 @@ Infinite scrolling/feed works by fetching the next set of posts when the user ha
 *Add a scroll event listener (ideally debounced) to the page that checks whether the position of the marker element is within a certain threshold from the bottom of the page.
 *Use Intersection Observer API to monitor when the marker element is entering or exiting another element or intersecting by a specified amount.
 
-3.) Virtualized Lists -
+IS vs Pagination - 
+  IS is best suited when used jus wants to explore with large amount on UGC.
+  Pagination is suiteable for goal-oriented apps when the user searches for a specific piece of content.
+
+  IS Pros - User Engagement (reduces bounce rate), Scroll is better than click, offers good UX for  Mobile 
+  IS Cons - Performance, SEO, Item search and location, browse endlessely not knowing the end of the content,same
+            scrollbar is deceptive, no footer, relatively hard to implement IS than pagination
+Pagination Pros - Good conversion, Sense of control, Item Location
+Pagination Cons - Extra actions
+3.) VIRTUALIZED LISTS -
 List virtualization, or "windowing", is the concept of only rendering what is visible to the user.
- The number of elements that are rendered at first is a very small subset of the entire list and the
-  "window" of visible content moves when the user continues to scroll. This improves both the rendering and 
-  scrolling performance of the list.
-  The trick here is to only render the nodes which are visible and recycle DOM nodes instead of creating new ones. 
+*  The trick here is to only render the nodes which are visible and recycle DOM nodes instead of creating new ones. 
+*The number of elements that are rendered at first is a very small subset of the entire list and the
+  "window" of visible content moves when the user continues to scroll.
+*This improves both the rendering and scrolling performance of the list.
 
 4.) Code Splitting
 
@@ -84,15 +119,24 @@ bypass repetitive content with skip links
 *Avoid Content Reordering - Make sure source order and visual order are same.
 
 11.) Internationalization & Localization
+i18n is the process of designing, developing software or products that can be adapted to different languages & cultures
+(l10n) is the process of adapting a product or content for a specific locale or market. 
+l10N involves translating, adapting, and customizing a product to meet the specific linguistic, cultural, and 
+regulatory requirements of a particular market
     *Use the lang attribute on the <html> tag.
     *Include the locale in the URL (e.g en_US, zh_CN, etc).
     *Webpages should use <link rel="alternate" hreflang="other_locale" href="url_for_other_locale"> to tell search engines 
     that there is another page at the specified href with the same content but for another language/locale.
     *Design headings, labels and buttons not to break in case of longer strings ensre you have 30% more white space to accomodate
     *Plan for line wrap and truncation in case if it does not fit in a single line.
+    *The language should be clear, familiar to the user, and appropriate for the culture of the target country.
+     Additionally, it should follow conventions used in the target country such as customary symbols,
+      punctuation, formatting, and typography. 
+    *The l10N process changes the user interface layout because the length of the translated text usually increases from its original length. 
     *Do not concetanate translated strings
     * Proper formatting of numbers, currency and time.
     * Do not put text in images to convey information is not scalable.
+    *Use images that are not geared toward a particular culture or locale, and avoid including text within graphics. 
 
 
 12.) Bundling Optimizations
@@ -165,7 +209,6 @@ to server-rendered HTML.
 StaticRendering -
 *SR means producing a seperate HTML for each URL ahead-of-time.
 SR happens at build-time and offers a fast FP,FCP  and TTI assuming amount of client-side JS is limited.
-
 
 *SR manages to achieve fast TTFB since HTML doesn't have to be generated on-the-fly.
 *With HTML responses generated in advance, SR can be deployed to multiple CDNs to leverage edge-caching.
