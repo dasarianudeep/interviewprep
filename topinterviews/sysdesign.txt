@@ -84,6 +84,7 @@ IS vs Pagination -
             scrollbar is deceptive, no footer, relatively hard to implement IS than pagination
 Pagination Pros - Good conversion, Sense of control, Item Location
 Pagination Cons - Extra actions
+
 3.) VIRTUALIZED LISTS -
 List virtualization, or "windowing", is the concept of only rendering what is visible to the user.
 *  The trick here is to only render the nodes which are visible and recycle DOM nodes instead of creating new ones. 
@@ -93,26 +94,50 @@ List virtualization, or "windowing", is the concept of only rendering what is vi
 
 4.) Code Splitting
 
+4.1) Lazy Loading - 
+On Visibility -  lazy loading images that aren't directly visible in the viewport,
+ but only get loaded once the user scrolls down.
+On Interaction - third-party widgets such as video players or chat widgets where you typically need 
+to click a button to display the main interface.
+
+A facade is a simple "preview" or "placeholder" for a resource intensive component like video player
+ where you simulate the basic experience, with an image or screenshot. 
+ When a user clicks on the "preview" (the facade), the code for the resource is loaded.
+
 5.) Loading indicators - shimmer effect Loading
 
 6.) Preserve Scroll Feed positions
 
 7.) Error states - failed to fetch from server, No network
 
-8.) Rendering Images
+8.) Rendering Images -
+* Choose Right format - Need finesh details with high-res - lossless Webp, jus optimizing photo - lossy Webp,
+icons, logos, diagrams - SVG - scalable and can be resized without losing quality, a11y, styled, animated via CSS
+* *Serve scaled images: resize images and ensure that the "display" size is as close as possible to the "natural" size of the image. 
+*<img src="flower-large.jpg" srcset="flower-small.jpg 480w, flower-large.jpg 1080w" sizes="50vw">
+* Lazy load images in browser - loading="lazy"
+* Image CDNs specialize in the transformation, optimization, and delivery of images. 
+You can also think of them as APIs for accessing and manipulating the images used on your site.
+* Consider using a "fetchpriority" attribute with value of "high" on the LCP image element so that the browser can
+ begin loading that image as soon as possible.
+* If an image is not immediately discoverable in the initial HTML, consider using a rel=preload hint for your
+  LCP candidate image so that the browser can load that image ahead of time.
+
 
 9.) Optimistic UI updates
 Optimistic update is a performance technique where the client immediately reflect the updated state after a 
 user interaction that hits the server and optimistically assume that the server request succeeds
 
 10.) Web Accessibility
-*keyboard Nav - Arrange elements in the DOM to be in logical order, Correctly set the visibility of offscreen content
-*Use semantic HTML elements
-*Use heading to create structually outline for urs page, Use landmark tags to define major sections of your page,
+*keyboard Nav - Ensure keyboard focus is present on webpage, Tab order should follow the visual order of the page
+ Avoiding keyboard traps, Focus indicator
+ *If you're building custom interactive components, use the tabindex attribute to ensure that they're keyboard accessible.
+*Use native semantic HTML elements
+*Usage of  heading to create structual outline for a page, Use landmark tags to define major sections of your page,
 bypass repetitive content with skip links
-*If you're building custom interactive components, use the tabindex attribute to ensure that they're keyboard accessible.
 *Label documents, alt texts for images, Label links and buttons, label form-elements
 *Add captions or screen reader descriptions to a web video using <track /> tag
+*Add transcripts to audios for dear people to read and understand.
 *U should ensure that interactive elements like buttons or links are large enough, and have enough space around them
 48*48px, spaced 8px v and h
 *Color Contast ratio - 4.5:1 and 3:1 for larger text
@@ -359,6 +384,28 @@ from the payment SDK.
 Retry queue - retryable errors such as transient errors
 DLQ -  if a message fails repeatedly, it eventually lands in the dead letter queue. A dead letter queue is useful 
 for debugging and isolating problematic messages for inspection to determine why they were not processed successfully.
+
+------------------------------------------ AUTOCOMPLETE UI ---------------------------------------------------------
+* Text-Based suggestions or rich text results (images, icons)
+* Fuzzy-search
+* <AutoComplete url="" onChange=f onClose=f onBlur=f onSelect=f resultCount=5 queryLen=3 timeout 
+  itemRenderer=(data) => {}: JSX
+* <input type="text" maxlength="30" aria-label="Search..." placeholder="Search..." role="combobox" 
+  aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" autocapitalize="off" autocomplete="off"
+  autocorrect="off" spellcheck="false" />
+* RaceConditions - 
+  *Attach a timestamp to each request to determine the latest request and only display the results of the 
+    latest request (not the latest response!). Discard the response of irrelevant queries.
+  *Save the results in an object/map, keyed by the search query string and only present the results 
+    corresponding to the input value in the search input.
+  
+* Failed requests and retries - Exponentials backoff strategy
+* Caching - 1.) Object map (k, v,) 2.) Normalised - non duplicated data 
+* Initial Results - Popular/Trending search queries, Historic queries
+* Debouncing user input
+* Handle long string results - truncating with an ellipsis or wrapping nicely. The text should not overflow and appear outside the component.
+* 
+
 
 
 --------------------------------------------------AUTOCOMPLETE---------------------------------------------------------
