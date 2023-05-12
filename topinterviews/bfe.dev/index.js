@@ -34,6 +34,22 @@ function curry (fn) {
   }
 }
 
+function onceUndefined(func) {
+  let ran = true;
+  let value;
+
+  return function (...args) {
+    if (ran) {
+      value = func.apply(this, args);
+      ran = false;
+    } else {
+      value = undefined;
+    }
+    return value;
+  }
+}
+
+
 function limit(func, n) {
   let count = 0, value;
 
@@ -2013,4 +2029,43 @@ async function fetchWithTimeout(resource, options = {}) {
   clearTimeout(id);
 
   return response;
+}
+
+
+public String miniParser(String s) {
+  StringBuilder sb = new StringBuilder();
+  String[] parts = s.split("\n\n");
+  for (String p : parts) {
+      sb.append("<p>");
+      boolean inBlockQuoteMode = false;
+      boolean inStrikeThroughRange = false;
+      for (int i = 0; i < p.length(); i++) {
+          char ch = p.charAt(i);
+          if (ch == '\n') {
+              sb.append("<br />");
+          } else if (ch == '~') {
+              if (inStrikeThroughRange) {
+                  i++;
+                  sb.append("</del>");
+                  inStrikeThroughRange = false;
+              } else {
+                  i++;
+                  sb.append("<del>");
+                  inStrikeThroughRange = true;
+              }
+          } else if (ch == '>') {
+              if (inBlockQuoteMode == false) {
+                  inBlockQuoteMode = true;
+                  sb.append("<blockquote>");
+              }
+          } else {
+              sb.append(ch);
+          }
+      }
+      if (inBlockQuoteMode) {
+          sb.append("</blockquote>");
+      }
+      sb.append("</p>");
+  }
+  return sb.toString();
 }

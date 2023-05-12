@@ -1,4 +1,23 @@
 /**
+ * One of the most rewarding project I drove and worked was the WPI initiative that has profound impact on improved 
+ * eCommerce Transaction revenue.
+ * To give some context about it, when i Joined Roku on 2020, the UX and peformance for the website was
+ * so sluggish that we saw very high bounce rate for our ecommerce application, we received reports from
+ * CX Team that few pages were taking longer time than expected time.
+ * 
+ * So, to address all these series of issues, I took a jab at analysing the performance by running
+ *performance insights in Devtools , analysing the assets being fetched and DOM elements, usage of 3rd
+  party scripts.
+
+  I came to conclusion that we had several issues looming around the way we are loading images, bundling the 
+  assets , rendering Videos.
+
+  So, I had few discussions with the team and manager and we decided to launch a Project and 
+  I have been entrusted with conceving a actionable plan.
+
+   The strategy I have laid out was in different aspects - Asset Opt, Build Opt, Delivery Opt,
+   Testing & Monitoring and setting Performance Budgets
+ * 
  * Web Peformance plays a major role in the sucess of any consumer-facing web application.
  * 
  * To measure WP across pages, Core Web Vital metrics are the golden standards.

@@ -1,5 +1,69 @@
+SDI Concepts - 
+----------------
 
-How do you analyze Web application Performance
+AVAILABILITY - Availability is the percentage of time that some service  is accessible to clients and is operated upon
+ under normal conditions.
+
+RELIABILITY - R measures how the service performs under varying operating conditions.
+ MTBF - total Uptime / Total Failures
+ MTTR - Total maintenace time / Total Repairs
+
+SCALABILITY is the ability of a system to handle an increasing amount of workload without compromising performance.
+
+FAIULT TOLERANCE refers to a system’s ability to execute persistently even if one or more of its components fail
+
+How to design for Scale and HA -
+--------------------------------
+*No SPOF, Design a multi-zone architecture by distribuitng pool of services across mul zones with date replication,
+load balancing and automated failover between zones.
+*Replicate data across regions for DR i case of regional outage.
+*Design mult-region architecture for resilience to regional outages.
+*Enable Auto-scaling in VMs, DBs -  sharding.
+*Degrade service levels gracefully when overloaded -  Services should detect overload and return lower quality 
+responses to the user or partially drop traffic, not fail completely under overload.
+*Prevent and mitigate traffic spikes - throttling, queueing, circuit breaking, graceful degradation, prioritizing critical requests.
+*Fail safe - If there's a failure due to a problem, the system components should fail in a way that allows the 
+overall system to continue to function
+*Design API calls and operational commands to be retryable - Idempotent actions
+*Minimize Cirtical Dependencies - increase redunancy, use asyn processing(queue, pubsub)
+*Ensure that every change can be rolled back
+
+
+SQL vs NoSQL - 
+----------------
+SQL - Structured Data, Strict Schema, Relational Data, Need for complex joins, TXNS, Date Integrity, Vertical scaling
+NoSQL - Schemaless, unstructured or semi-structured data
+
+API Gateway vs LB 
+-------------------
+An API gateway is a layer that sits between the client and the backend services.
+ It acts as a front door for your backend services, routing requests, and handling the various
+  cross-cutting concerns such as security, authentication, rate limiting, and protocol translation.
+   API gateways can also provide a unified API for different microservices and can aggregate responses 
+   from multiple services
+
+A load balancer is a device or software component that distributes network traffic across a group of backend servers. 
+Load balancers can ensure that traffic is evenly distributed across the servers, which can help avoid overloading
+ individual servers, leading to better performance and availability.
+
+Message Queue 
+---------------
+*It provides a way to deliver messages to an application asynchronously, which means that it does not need to
+ wait for a response before sending the next message.
+*An asynchronous form of communication where one program or person sends a message to another program or person,
+ but doesn't wait for an immediate response or acknowledgment.
+*Better Decoupling
+*Scalability
+*Increased Reliability - In the event of a system crash, message queues also have the option to store the messages 
+in their memory. The messages would be kept in the queue. For instance, if the client that was supposed to 
+receive the message broke down for any reason. The message queues can play the message once the client's machine
+ is up
+*Traffic Spikes -  Message queues are effective at handling traffic spikes. Without message queues, it's
+ possible that your system might have broken because of traffic spikes. This would result in the loss of the
+  messages. The usage of a message queue, however, allows your server to process messages at its own pace and 
+  eliminates the need to handle traffic surges on the server.How do you analyze Web application Performance
+
+---------------------------------------------------------------------------------------------------------------
 
 1.) Analyze Network Tab - 
 Large assets - JS, images
@@ -285,40 +349,6 @@ maxEntries, maxArraySize, maxDepth, maxNameLength, maxValueLength
 Analytics - 
 
 
-
--------------------------------------------------------------------------------------------------------------------
-Availability - Availability is the percentage of time that some service  is accessible to clients and is operated upon
- under normal conditions.
-
- Reliability - R measures how the service performs under varying operating conditions.
- MTBF - total Uptime / Total Failures
- MTTR - Total maintenace time / Total Repairs
-
-Scalability is the ability of a system to handle an increasing amount of workload without compromising performance.
-
-Fault tolerance refers to a system’s ability to execute persistently even if one or more of its components fail
-
-How to design for Scale and HA -
---------------------------------
-*No SPOF, Design a multi-zone architecture by distribuitng pool of services across mul zones with date replication,
-load balancing and automated failover between zones.
-*Replicate data across regions for DR i case of regional outage.
-*Design mult-region architecture for resilience to regional outages.
-*Enable Auto-scaling in VMs, DBs -  sharding.
-*Degrade service levels gracefully when overloaded -  Services should detect overload and return lower quality 
-responses to the user or partially drop traffic, not fail completely under overload.
-*Prevent and mitigate traffic spikes - throttling, queueing, circuit breaking, graceful degradation, prioritizing critical requests.
-*Fail safe - If there's a failure due to a problem, the system components should fail in a way that allows the 
-overall system to continue to function
-*Design API calls and operational commands to be retryable - Idempotent actions
-*Minimize Cirtical Dependencies - increase redunancy, use asyn processing(queue, pubsub)
-*Ensure that every change can be rolled back
-
-
-SQL vs NoSQL - 
-SQ - Structured Data, Strict Schema, Relational Data, Need for complex joins, TXNS, Date Integrity, Vertical scaling
-NoSQL - Schemaless, unstructured or semi-structured data
-
 ---------------------------------------WEB SECURITY---------------------------------------------------------------
 CORS - 
 
@@ -345,6 +375,7 @@ CSRF Mitigation -
 *Check the referrer header
 *GET should not have side effects
 *CSRF Tokens
+-------------------------------------------------------------------------------------------------------------------
 
 
 Web Sockets vs SSE vs Long-Polling
