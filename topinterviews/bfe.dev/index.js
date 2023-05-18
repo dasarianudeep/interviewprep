@@ -1669,6 +1669,22 @@ const groupBy = (arr, key) => {
   }, {});
 }
 
+function groupByToMap(items, key) {
+  // initialize our map
+  const map = new Map();
+  items.forEach((item) => {
+    // get the value we're grouping by
+    const keyValue = item[key];
+    // get the array of items for this key value. default to an empty array
+    const currArr = map.has(keyValue) ? map.get(keyValue) : [];
+    // add the current item
+    currArr.push(item);
+    // update the array
+    map.set(keyValue, currArr);
+  });
+  return map;
+}
+
 function stringify(data) {
   if(typeof data === 'bigint') {
     throw new Error('Do not know how to serialize a BigInt at JSON.stringify');

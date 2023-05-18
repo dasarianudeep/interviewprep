@@ -12,6 +12,24 @@ SCALABILITY is the ability of a system to handle an increasing amount of workloa
 
 FAIULT TOLERANCE refers to a system’s ability to execute persistently even if one or more of its components fail
 
+Monolith - Built and deployed as single unit 
+Pros - 
+1.)Easy development and Fast deployment.
+2.)Simple and uncomplicated testing and montoring
+3.)
+
+Cons - 
+1.)Tough and challenging to scale.
+2.)Tight Coupling.
+3.)System fragility - if one part of monolity fails, the entire monilith fails.
+4.)Low agility - If maintaoned by multiple teams, relase, rollout, bug fixes and feat iterations are all to be 
+coordinated.
+
+Microservices - Build and deployed as collection of independent and isolated services.
+Pros - Granular Scalability, Reusability, Reliability, Tech agnostic
+Cons - Increased complexity, Difficult in Testing and debugging, Deployment overhead
+
+
 How to design for Scale and HA -
 --------------------------------
 *No SPOF, Design a multi-zone architecture by distribuitng pool of services across mul zones with date replication,
@@ -28,11 +46,19 @@ overall system to continue to function
 *Minimize Cirtical Dependencies - increase redunancy, use asyn processing(queue, pubsub)
 *Ensure that every change can be rolled back
 
+*Common ways to ensure a system is highly available include:
+
+Diverting traffic to other servers seamlessly without losing data by employing tools like load balancers, reverse proxies, and DNS
+Investing in redundancy by leveraging database replication, regions, and availability zones
+Protecting the system from failures and atypical behaviors by utilizing circuit breakers, rate limiting, load shedding, and retries
+Detecting system failures with monitoring tools and techniques like chaos engineering
 
 SQL vs NoSQL - 
 ----------------
 SQL - Structured Data, Strict Schema, Relational Data, Need for complex joins, TXNS, Date Integrity, Vertical scaling
-NoSQL - Schemaless, unstructured or semi-structured data
+NoSQL - Schemaless, unstructured or semi-structured data, High QPS load, Denormalised.
+
+Denormalization Benefits - Reduce the number of joins, Simpler and performant queries, REduces complexity
 
 API Gateway vs LB 
 -------------------
@@ -45,6 +71,28 @@ An API gateway is a layer that sits between the client and the backend services.
 A load balancer is a device or software component that distributes network traffic across a group of backend servers. 
 Load balancers can ensure that traffic is evenly distributed across the servers, which can help avoid overloading
  individual servers, leading to better performance and availability.
+
+ CDNs -  Distributed group of servers that caches content near end users
+ ------
+ *Resource Delivery - 
+ When a CDN is used to deliver resources from the origin, a new connection is established between the client and a
+  nearby CDN server. The remainder of the journey (in other words, the data transfer between the CDN server and
+   origin) occurs over the CDN's network - which often includes existing, persistent connections with the origin. 
+
+*Some CDNs improve upon this even further by routing traffic to the origin through multiple CDN servers 
+spread across the Internet. Connections between CDN servers occur over reliable and highly optimized routes, 
+rather than routes determined by the Border Gateway Protocol (BGP).
+
+
+*Features - Caching at edge servers, Brotli Compression, Image Optimization, 
+
+Features / Advantages of message queues
+*Decoupling: Operations of the consumer and producer are completely independent of one another.
+*Scalability: The number of producers and consumers can easily be scaled as required.
+Buffering and load management: Message queues act essentially as data buffers. In case of a spike in the amount of data that needs to be processed by the consumer service, the latter needs not be made aware of the fact. The message queue buffers the data for the service, and the service only needs to process the data one by one, rather than having to manage a large amount of data all at once. This makes your architecture more robust overall.
+*Resiliency: Even if your consumer processes go down, it doesn't mean that your application breaks. Messages for the consumer will remain queued in the messaging queue. Whenever the consumer service comes back up, it can start processing the messages without having to do any additional setup or work.
+*Delivery guarantees: Message queues offer a general guarantee that any message that gets pushed to a queue will get delivered to a consumer eventually.
+*Order guarantee: Being a queue, an order is associated to the incoming messages implicitly. The same order is followed in the consumption and processing of the data.
 
 Message Queue 
 ---------------
@@ -62,6 +110,59 @@ receive the message broke down for any reason. The message queues can play the m
  possible that your system might have broken because of traffic spikes. This would result in the loss of the
   messages. The usage of a message queue, however, allows your server to process messages at its own pace and 
   eliminates the need to handle traffic surges on the server.How do you analyze Web application Performance
+
+  GraphQL vs REST
+  -----------------
+1.)GraphQL APIs have a strongly typed schema
+2.) Developers often describe the major benefit of GraphQL with the fact that clients can retrieve exactly the data
+ they need from the API. They don’t have to rely on REST endpoints that return predefined and fixed responses.
+ 3.)RAPID Product Iteration - GraphQL exposes a single endpoint that allows you to access multiple resources.
+ 4.)GraphQL simplifies the task of aggregating data from multiple sources or APIs and then resolving the data 
+ to the client in a single API call. On the other hand, API technologies like REST would require multiple HTTP 
+ calls to access data from multiple sources
+ 5.) No Caching in GraphQL
+ 6.) Error handling in REST is easier when compared to GraphQL.
+ 7.) N+1 query problem-
+ where a client application calls the server N+1 times to fetch one collection resource + N child resources
+
+ gRPC vs REST
+ ------------
+ Client application can directly call a method on server application on different machine as if it were a local object,
+
+*gRPC’s low-latency and high-speed throughput communication make it particularly useful for connecting 
+architectures that consist of lightweight microservices where the efficiency of message transmission is paramount.
+
+*Low-power, low-bandwidth networks: gRPC’s use of serialized Protobuf messages offers lightweight messaging,
+ greater efficiency, and speed for bandwidth-constrained, low-power networks (especially when compared to JSON). 
+ IoT would be an example
+
+ *The protocol buffer is language agnostic, so you can make clients in Python and servers in Go and still be able to communicate without making any fuss.
+
+ *Rest does not provide built-in code generation features, meaning the developer needs third-party apps to produce API 
+ code, whereas gRPC has native code generation features due to its protobuf compiler, which is compatible with 
+ several programming languages. 
+
+ *gRPC enables you to manage bidirectional streaming to send and receive messages in real-time
+
+
+Location Based applications -
+------------------------------
+*Geospatial data, or geodata, is data that includes information related to locations on the Earth’s surface. 
+You can map objects, events, to a specific geographical area identified by latitude and longitude coordinates. 
+
+*Geohash is a convenient way of expressing a location (anywhere in the world) using a short alphanumeric string, 
+with greater precision obtained with longer strings.
+
+*It works by reducing the two-dimensional longitude and latitude data into a one-dimensional string of letters and 
+digits. Geohash algorithms work by recursively dividing the world into smaller and smaller grids
+
+*The precision factor determines the size of the grid. We are only interested in geohashes with lengths between 4 and 6.
+
+
+DB Locking -
+--------------
+
+https://convincedcoder.com/2018/09/01/Optimistic-pessimistic-locking-sql/#locking-strategies
 
 ---------------------------------------------------------------------------------------------------------------
 

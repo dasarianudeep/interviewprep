@@ -150,3 +150,50 @@
       
       workMyCollection(arr)
         .then(() => console.log(`FINAL RESULT is ${final}`))
+
+        function getInSequence(array, asyncFunc) {
+          return array.reduce((previous, current) => (
+            previous.then(accumulator => (
+              asyncFunc(current).then(result => accumulator.concat(result))
+            ))
+          ), Promise.resolve([]));
+        }
+
+        function fakeAPI(str) {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {resolve(str + ' resolved.')}, 1000);
+          });
+        }
+        
+        var arr = ['p1', 'p2', 'p3', 'p4'];
+        arr.reduce((acc, curr) => {
+          return acc.then(res => {
+            return fakeAPI(curr).then(resp => {
+              return [...res, resp];
+            });
+          });
+        }, Promise.resolve([])).then(res => {
+          console.log(res);
+        });
+
+        let characterResponse = await fetch('http://swapi.co/api/people/2/')
+        let characterResponseJson = await characterResponse.json()
+        let films = await Promise.all(
+          characterResponseJson.films.map(async filmUrl => {
+            let filmResponse = await fetch(filmUrl)
+            return filmResponse.json()
+          })
+        )
+        console.log(films)
+
+        fetch('http://swapi.co/api/people/2/')
+  .then(characterResponse => characterResponse.json())
+  .then(characterResponseJson => {
+    Promise.all(
+      characterResponseJson.films.map(filmUrl =>
+        fetch(filmUrl).then(filmResponse => filmResponse.json())
+      )
+    ).then(films => {
+      console.log(films)
+    })
+  })
