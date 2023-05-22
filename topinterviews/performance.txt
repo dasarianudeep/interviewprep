@@ -548,6 +548,9 @@ Cons - SSE suffers from a limitation to the maximum  of 6 open connections, whic
 
 
  Long Polling - 
+ In long polling, a client holds the connection open until there are actually new messages available or a 
+ timeout threshold has been reached. Once the client receives new messages, it immediately sends another request to the server,
+  restarting the process
 Pros - Simple to implement,based on HTTP. It works in every browser and environment.
 Cons - Higher latency, Resource intensive Creates new connection each time, which can be intensive on the server.
 
