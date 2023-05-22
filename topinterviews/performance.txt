@@ -60,6 +60,13 @@ NoSQL - Schemaless, unstructured or semi-structured data, High QPS load, Denorma
 
 Denormalization Benefits - Reduce the number of joins, Simpler and performant queries, REduces complexity
 
+NoSQL databases are likely the better choice when:
+
+You have a large volume and variety of data, data is semi or unstructured
+Scalability is a top priority
+You need continuous availability
+Working with big data or performing real-time analytics
+
 API Gateway vs LB 
 -------------------
 An API gateway is a layer that sits between the client and the backend services.
@@ -96,6 +103,10 @@ Buffering and load management: Message queues act essentially as data buffers. I
 
 Message Queue 
 ---------------
+Queues can be great in scenarios where your application needs something ton be done but doesn’t need it be done right now,
+ or doesn’t even care about the result. Instead of calling a web service and waiting for it to complete,
+  you can write the message to a queue and let the same business logic happen later
+
 *It provides a way to deliver messages to an application asynchronously, which means that it does not need to
  wait for a response before sending the next message.
 *An asynchronous form of communication where one program or person sends a message to another program or person,
@@ -110,6 +121,11 @@ receive the message broke down for any reason. The message queues can play the m
  possible that your system might have broken because of traffic spikes. This would result in the loss of the
   messages. The usage of a message queue, however, allows your server to process messages at its own pace and 
   eliminates the need to handle traffic surges on the server.How do you analyze Web application Performance
+  *Batching is a great reason to use message queues.
+  *
+
+Dead-letter queues (DLQ) exist alongside regular message queues. They act as temporary storage for erroneous 
+and failed messages. DLQs prevent the source queue from overflowing with unprocessed messages.
 
   GraphQL vs REST
   -----------------
@@ -163,7 +179,36 @@ DB Locking -
 --------------
 
 https://convincedcoder.com/2018/09/01/Optimistic-pessimistic-locking-sql/#locking-strategies
+Optimistic Locking is a strategy where you read a record, take note of a version number and check that the version 
+hasn't changed before you write the record back. When you write the record back you filter the update on the version
+ to make sure it's atomic. (i.e. hasn't been updated between when you check the version and write the record to
+  the disk) and update the version in one hit.
 
+  Pessimistic Locking is when you lock the record for your exclusive use until you have finished with it. 
+  It has much better integrity than optimistic locking but requires you to be careful with your application 
+  design to avoid Deadlocks. 
+
+Consistency - 
+---------------
+*Eventual consistency offers low latency at the risk of returning stale data
+*Strong Consistency offers up-to-date data but at the cost of high latency.
+
+Gossip is a peer-to-peer communication protocol in which nodes periodically exchange state information about 
+themselves and about other nodes they know about.
+
+REDIS sorted set is a collection of unique strings (members) ordered by an associated score. 
+
+Consistent hashing facilitates the distribution of data across a set of nodes in such a way that minimizes the re-mapping/ reorganization of data when
+ nodes are added/removed.
+
+
+CRDTs-
+------
+Conflict-free replicated data types (CRDTs) allow replication of a
+data structure across multiple machines without risking conflicts
+between different versions. Even though each machine may concurrently modify its own copy of the data structure, 
+a CRDT guarantees that these concurrent modifications can be merged into a
+consistent result finally.
 ---------------------------------------------------------------------------------------------------------------
 
 1.) Analyze Network Tab - 

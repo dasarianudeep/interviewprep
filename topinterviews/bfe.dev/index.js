@@ -2085,3 +2085,24 @@ public String miniParser(String s) {
   }
   return sb.toString();
 }
+
+class TokenBucket {
+  constructor(bucketSize = 5, refillInterval = 1000) {
+    this.tokens = bucketSize;
+
+    setInterval(() => {
+      if (this.tokens < bucketSize) {
+        this.tokens++;
+      }
+    }, refillInterval);
+  }
+
+  redeem() {
+    if (this.tokens) {
+      this.tokens--;
+      return true;
+    }
+    return false;
+  }
+};
+
