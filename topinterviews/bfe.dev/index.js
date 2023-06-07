@@ -9,16 +9,23 @@ The returned function should
 if number of arguments matches original function, return the final result
 otherwise return a function which expects the missing arguments, also this function needs to be curried as well.
 */
-function curry (fn) {
-    return function curried (...args) {
-        if (args.length >= fn.length) {
-            return fn.call(this, ...args);
-        } 
-        //Returns a function which expects the missing arguments and also this function should be curried as well
-        return function (...missingArsg) {
-            return curried.call(this, ...args, ...missingArsg);
-        }
+function curry(func) {
+  // here ...args collects arguments as array (rest)
+  return function curriedFunc(...args) {
+    // Here we check if current args passed equals the number of args func expects
+    if(args.length >= func.length) {
+      // if yes, we spread args elements to pass into func (spread). This is our base case.
+      return func(...args)
+    } else {
+      /* if not, we return a function that collects the next arguments passed in next and 
+      we recursively call curriedFunc, accumalating and spreading the values of args first and then
+      the values of next. next will take into consideration a variable amount of next arguments
+      e.g (1, 2) (1) (1,2,3) */
+      return function(...next) {
+        return curriedFunc(...args,...next);
+      }
     }
+  }
 }
 
  function once(func) {
@@ -79,43 +86,77 @@ function limit(func, n) {
 //   };
 // }
 
-function throttleLeading(fn, delay) {
-  let timeout;
+// function throttleLeading(fn, delay) {
+//   let timeout;
 
-  return function(...args) {
-    if (!timeout) {
-      fn.apply(this, args);
-      timeout = true;
-      setTimeout(() => {
-        timeout =  false;
-      }, delay);
+//   return function(...args) {
+//     if (!timeout) {
+//       fn.apply(this, args);
+//       timeout = true;
+//       setTimeout(() => {
+//         timeout =  false;
+//       }, delay);
+//     }
+//   }
+// }
+// function throttleTrailing(fn, delay) {
+//   let timerId;
+
+//   return function(...args) {
+//     if (timerId) return;
+
+//     timerId = setTimeout(() => {
+//       fn.apply(this, args);
+//       timerId = null;
+//     }, delay);
+//   }
+// }
+
+// function throttle(func, timeFrame) {
+//   var lastTime = 0;
+//   return function (...args) {
+//       var now = new Date();
+//       if (now - lastTime >= timeFrame) {
+//           func(...args);
+//           lastTime = now;
+//       }
+//   };
+// }
+function throttle(cb, delay = 1000) {
+  let shouldWait = false
+  let waitingArgs
+  const timeoutFunc = () => {
+    if (waitingArgs == null) {
+      shouldWait = false
+    } else {
+      cb(...waitingArgs)
+      waitingArgs = null
+      setTimeout(timeoutFunc, delay)
     }
   }
-}
-function throttleTrailing(fn, delay) {
-  let timerId;
 
-  return function(...args) {
-    if (timerId) return;
+  return (...args) => {
+    if (shouldWait) {
+      waitingArgs = args
+      return
+    }
 
-    timerId = setTimeout(() => {
-      fn.apply(this, args);
-      timerId = null;
-    }, delay);
+    cb(...args)
+    shouldWait = true
+    setTimeout(timeoutFunc, delay)
   }
 }
 
-function throttle(func, timeFrame) {
-  var lastTime = 0;
-  return function (...args) {
-      var now = new Date();
-      if (now - lastTime >= timeFrame) {
-          func(...args);
-          lastTime = now;
-      }
-  };
-}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const randIdx = Math.floor(Math.random() * (i+1));
+    const storedItem = arr[i];
+    arr[i] = arr[randIdx];
+    arr[randIdx] = storedItem;
+  }
 
+  return arr;
+}
 
 Array.prototype.myFlat = (depth = 1) => {
   let arr = this;
@@ -314,6 +355,33 @@ class jQuery {
 //         return !!this.node[node._key];
 //     }
 // }
+
+class NodeStore {
+  /**
+  * @param {Node} node
+  * @param {any} value
+  */
+ cache = {}
+ set(node, value) {
+   node.__ACCESS_KEY__ = Symbol();
+   this.cache[node.__ACCESS_KEY__] = value;
+ }
+ /**
+  * @param {Node} node
+  * @return {any}
+  */
+ get(node) {
+   return this.cache[node.__ACCESS_KEY__];
+ }
+ 
+ /**
+  * @param {Node} node
+  * @return {Boolean}
+  */
+ has(node) {
+   return !!this.cache[node.__ACCESS_KEY__]
+ }
+}
 
 function findCorrespondingNodeDFS (rootA, rootB, target) {
     if (rootA === target) {
@@ -868,6 +936,11 @@ Array.prototype.myReduce = function (callbackFn, initialValue) {
 //     }
 //     return elements;
 //   }
+function detectType(data) {
+  // your code here
+  if(data instanceof FileReader) return typeof data;
+  return typeof data === 'object' ? (data === null ? 'null' : data.constructor.name.toLowerCase()) : typeof data;
+}
 
   function isSameTree(nodeA, nodeB) {
     if (nodeA.nodeType !== nodeB.nodeType) {
@@ -1064,7 +1137,89 @@ function semverCompare(v1, v2) {
     return selectors.join(' > ');
   }
 
+  class ListNode {
+    constructor (key, value) {
+        this.key = key;
+        this.value = value;
+        this.prev = null;
+        this.next = null;
+    }
+}
 
+class DLL {
+    constructor () {
+        this.head = new ListNode();
+        this.tail = new ListNode();
+        this.connect(this.head, this.tail);
+    }
+
+    add (node) {
+        this.connect(node, this.head.next);
+        this.connect(this.head, node);
+    }
+
+    removeLast() {
+        const lastNode = this.tail.prev;
+        this.delete(lastNode);
+        return lastNode;
+    }
+     moveToFront(node) {
+         this.delete(node);
+         this.add(node);
+     }
+
+    connect(node1, node2) {
+        node1.next = node2;
+        node2.prev = node1;
+    }
+
+    delete(node) {
+        this.connect(node.prev, node.next);
+    }
+}
+
+class LRUCacheDLL {
+    constructor (capacity) {
+        this.map = {};
+        this.list = new DLL();
+        this.capacity = capacity;
+        this.size = 0;
+    }
+
+    get(key) {
+        // if key does not exist, return -1
+        if (!this.map[key]) return -1;
+
+        // if key present, move to front of list, return value
+        const node = this.map[key];
+        this.list.moveToFront(node);
+        return node.value;
+    }
+
+    put(key, value) {
+        // If key exists, Update value and move to front of list
+        if (this.map[key]) {
+            const node = this.map[key];
+            node.value = value;
+            this.list.moveToFront(node);
+            return;
+        }
+
+        // If no key exists,and at capacity: remove last node from list and from map
+        if (this.size === this.capacity) {
+            const lastNode = this.list.removeLast();
+            delete this.map[lastNode.key];
+            this.size-=1;
+        }
+
+        // Add to list, save to map
+        const newNode = new ListNode(key, value);
+        this.list.add(newNode);
+        this.map[key] = newNode;
+        this.size+=1
+
+    }
+}
   class LRUCache {
     constructor(capacity) {
       this.map = new Map();
@@ -1144,6 +1299,45 @@ function semverCompare(v1, v2) {
 
     return null;
   }
+
+  /**
+ * @param {HTMLElement} root
+ * @param {HTMLElement} target
+ * @return {HTMLElemnt | null}
+ */
+function nextRightSibling_i(root, target) {
+  // your code here
+  if(!root) return null;
+  let queue = [root, null];
+  while(queue.length){
+    const current = queue.shift();
+    if(current === target){
+      return queue.shift();
+    }
+    if(current == null){
+      queue.push(null);
+    }else{
+      queue.push(...current.children);
+    }
+  }
+}
+
+function nextRightSibling(root, target) {
+  // If target is null, return null
+  if(!target) return null;
+  // If there is a right sibling return it
+  if(target.nextElementSibling) return target.nextElementSibling;
+  // There is no right sibling so we need to go to parent and look for another node
+  let parent = target.parentElement;
+  // Loop up towards root till we get a node with 
+  while(parent){
+    parent = nextRightSibling(root, parent);
+    // because we're only 1 level above, if there's a first child, it is the right sibling.
+    if(parent && parent.firstElementChild) return parent.firstElementChild;
+  }
+  // right sibling not found, return null
+  return null;
+}
 
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 let id = 0;
@@ -1453,6 +1647,30 @@ function getHeight(tree) {
   return maxHeight + 1;
 }
 
+/*
+Suppose we have an array of items - A, and another array of indexes in numbers - B
+
+const A = ['A', 'B', 'C', 'D', 'E', 'F']
+const B = [1,   5,   4,   3,   2,   0]
+You need to reorder A, so that the A[i] is put at index of B[i], which means B is the new index for each item of A.
+
+For above example A should be modified inline to following
+
+['F', 'A', 'E', 'D', 'C', 'B']
+**/
+function sort(items, newOrder) {
+  for(let i = 0; i < items.length; i++) {
+    const j = newOrder[i];
+    swap(items, i, j);
+    swap(newOrder, i, j);
+  }
+
+  return items;
+}
+
+function swap(arr, i, j) {
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+}
 function myNew (constructor, ...args) {
 
   let that = Object.create(constructor.prototype);
@@ -1465,6 +1683,15 @@ function myNew (constructor, ...args) {
 
   return that;
 }
+
+function sum(a) {
+  return function(b){
+    if(b) return sum(a+b);
+    return a;
+  }
+}
+
+console.log(sum(10)(20)(90)())
 
 function MyInstanceOf (obj, target) {
   /**
@@ -1774,6 +2001,43 @@ function hightlightText (s, query) {
 
   return '';
 }
+
+const term = "visibility"
+let results = `<h2>The VISibility property isn’t just about visibility<h2>`;
+
+results = results.replace(new RegExp(term, "gi"), (match) => `<mark>${match}</mark>`);
+console.log(results);
+
+/**
+    <ul>
+            <li>item 1</li>
+            <li>item 2</li>
+            <li>item 3</li>
+            <li>item 4</li>
+            <li>item 5</li>
+            <li>item 6</li>
+            <li>item 7</li>
+            <li>item 8</li>
+            <li>item 9</li>
+           <li>item 10</li>
+        </ul>
+      
+     
+        <input id="search" type="text">
+
+        let searchBar = document.getElementById("search");
+
+        const displayMatches = () => {
+        let userInput = document.getElementById("search").value;
+        let target = document.getElementsByTagName("li");
+        let regex = new RegExp(`${userInput}`, 'g');
+        for (i = 0; i < target.length; i++) {
+            target[i].innerHTML = target[i].innerText.replace(regex, match => `<mark>${match}</mark>`);
+        }
+        }
+
+        searchBar.addEventListener('keyup', displayMatches);
+ */
 
 function classNames(...args) {
   const classes = [];
@@ -2086,6 +2350,35 @@ public String miniParser(String s) {
   return sb.toString();
 }
 
+// Recursive React Rendering
+const TocItem = ({ toc }) => {
+  const subItem = (toc.items || []).map(item => (
+    <ul key={item.url}>
+      {/* ✅ Recursion ✅ */}
+      <TocItem toc={item} type="child" />
+    </ul>
+  ))
+
+  return (
+    <li key={toc.title}>
+      <a href={toc.url}>{toc.title}</a>
+      {subItem}
+    </li>
+  )
+}
+
+const TableOfContents = ({ toc }) => (
+  <ul>
+    {(toc.items || []).map((item, index) => (
+      <TocItem key={index} toc={item} />
+    ))}
+  </ul>
+)
+
+/*
+-----------------------------------------------------------
+**/
+
 class TokenBucket {
   constructor(bucketSize = 5, refillInterval = 1000) {
     this.tokens = bucketSize;
@@ -2105,4 +2398,104 @@ class TokenBucket {
     return false;
   }
 };
+
+/*
+-----------------------------------------------------------
+Create React like VDOM from DOM tree
+**/
+
+function virtualize(root) {
+
+  const result = {
+    type: root.tagName.toLowerCase(),
+    props: {}
+  };
+
+  for (let attr of root.attributes) {
+    const name = attr.name === 'classname' ? 'className' : attr.name;
+    result.props[name] = attr.value;
+  }
+
+  const children = [];
+  for (let node of root.childNodes) {
+    if (node.nodeType === 3 && !node.textContent.includes('\n')) {
+      children.push(node.textContent);
+    } else if (node.nodeType === 1) {
+      children.push(virtualize(node));
+    }
+  }
+
+  result.props.children = children.length === 1 ? children[0] : children;
+  return result;
+}
+
+function render(jsxObj) {
+  if (typeof jsxObj === 'string') {
+    return document.createTextNode(jsxObj);
+  }
+
+  const {type, props: { children, ...attrs }} = jsxObj;
+  const element = document.createElement(type);
+
+  for (let [attr, value] of Object.entries(attrs)) {
+    if (attr === 'className') {
+      element.className = value;
+    } else {
+      element.setAttribute(attr, value);
+    }
+  }
+
+  const childrenArr = Array.isArray(children) ? children : [children];
+
+  for (const child of childrenArr) {
+    element.append(render(child));
+  }
+
+  return element;
+}
+/*
+  VDOM Rendering - Custom functional component
+**/
+function createElement(type, props, ...children) {
+  return {
+    type,
+    props: {
+      ...props,
+      children
+    }
+  }
+}
+
+function render(json) {
+  // create the top level emlement
+  // recursively append the children
+  // textnode
+  if (typeof json === 'string') {
+    return document.createTextNode(json)
+  }
+
+  // element
+  const {type, props} = json
+  const {children, ...attrs} = props
+
+  // if functional component
+  if (typeof type === 'function') {
+    return render(json.type(props))
+  }
+  
+  // if intrinsic html tag
+  const element = document.createElement(type)
+  
+  for (let [attr, value] of Object.entries(attrs)) {
+    element[attr] = value
+  }
+  
+  const childrenArr = Array.isArray(children) ? children : [children]
+  
+  for (let child of childrenArr) {
+    element.append(render(child))
+  }
+  
+  return element
+}
 

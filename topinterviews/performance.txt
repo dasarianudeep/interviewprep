@@ -69,6 +69,8 @@ Working with big data or performing real-time analytics
 
 API Gateway vs LB 
 -------------------
+https://konghq.com/blog/engineering/api-gateway-vs-api-proxy-understanding-the-differences
+
 An API gateway is a layer that sits between the client and the backend services.
  It acts as a front door for your backend services, routing requests, and handling the various
   cross-cutting concerns such as security, authentication, rate limiting, and protocol translation.
@@ -78,6 +80,9 @@ An API gateway is a layer that sits between the client and the backend services.
 A load balancer is a device or software component that distributes network traffic across a group of backend servers. 
 Load balancers can ensure that traffic is evenly distributed across the servers, which can help avoid overloading
  individual servers, leading to better performance and availability.
+
+ An API gateway's primary function is to provide a unified interface for clients to access backend services,
+  while a load balancer's primary function is to distribute traffic across a group of servers.
 
  CDNs -  Distributed group of servers that caches content near end users
  ------
@@ -512,6 +517,9 @@ The CORS specification defines a complex request as
 *A request that has a Content-Type header other than application/x-www-form-urlencoded, multipart/form-data, or text/plain
 
 Server response can also include an "Access-Control-Max-Age" header to specify the duration to cache preflight results 
+
+XSS - Cross-site Scripting
+
 
 CSRF - 
 
