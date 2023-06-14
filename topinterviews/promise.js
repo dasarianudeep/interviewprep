@@ -20,6 +20,22 @@
  * 
  * [func1, func2, func3].reduce((p, f) => p.then(f), Promise.resolve()).then(res3 => console.log(res3))
  * 
+ * const urls = ['/url1', '/url2', '/url3']
+ * const funcs = urls.map(url => () => $.ajax(url))
+ * 
+  * function runSerial(tasks) {
+    var result = Promise.resolve();
+    tasks.forEach(task => {
+      result = result.then(() => task());
+    });
+    return result;
+  }
+
+ * const promiseSerial = funcs =>
+    funcs.reduce((promise, func) =>
+      promise.then(result => func().then(Array.prototype.concat.bind(result))),
+      Promise.resolve([]))
+ * 
  * const composeAsync = (...funcs) => x => funcs.reduce((acc, val) => acc.then(val), Promise.resolve(x));
  * 
  * let result;

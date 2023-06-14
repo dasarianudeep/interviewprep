@@ -562,6 +562,28 @@ Cons - SSE suffers from a limitation to the maximum  of 6 open connections, whic
 Pros - Simple to implement,based on HTTP. It works in every browser and environment.
 Cons - Higher latency, Resource intensive Creates new connection each time, which can be intensive on the server.
 
+𝗧𝗲𝗰𝗵𝗻𝗶𝗾𝘂𝗲𝘀 𝘁𝗼 𝗜𝗺𝗽𝗹𝗲𝗺𝗲𝗻𝘁 𝗥𝗲𝗮𝗹-𝘁𝗶𝗺𝗲 𝗖𝗹𝗶𝗲𝗻𝘁-𝗦𝗲𝗿𝘃𝗲𝗿 𝗖𝗼𝗺𝗺𝘂𝗻𝗶𝗰𝗮𝘁𝗶𝗼𝗻
+
+Long Polling, WebSockets, and Server-Sent Events (SSE) are different techniques to implement real-time communication between a client (typically a web browser) and a server. These techniques enable the server to push data to the client without the client needing to request it explicitly. Here's an overview of each method and their differences.
+
+𝟭. 𝗟𝗼𝗻𝗴 𝗣𝗼𝗹𝗹𝗶𝗻𝗴 is a technique where the client sends a request to the server, and the server holds the connection open until it has new data to send to the client. Once the server sends the data, the connection is closed, and the client immediately sends another request to "poll" for new data. This process repeats indefinitely, creating a near-real-time communication channel.
+
+The 𝗮𝗱𝘃𝗮𝗻𝘁𝗮𝗴𝗲𝘀 of long pooling are that it works with existing infrastructure and is compatible with all browsers. The disadvantages are that it is less efficient than other methods due to the overhead of opening and closing multiple connections.
+
+This method should be used when we don't need real-time updates, e.g., when you want to fetch several users for a subscriber count on some page—pushing the data after each sign-up would be chaos.
+
+𝟮. 𝗪𝗲𝗯𝗦𝗼𝗰𝗸𝗲𝘁𝘀 are a protocol that enables full-duplex, bidirectional communication between a client and a server over a single, long-lived connection. This allows for real-time communication with lower latency and overhead compared to Long Polling. When a WebSocket connection is opened, the client and server can send data in both directions in real-time.
+
+The 𝗮𝗱𝘃𝗮𝗻𝘁𝗮𝗴𝗲𝘀 of WebSockets are low latency and support for bi-directional communication. The 𝗱𝗶𝘀𝗮𝗱𝘃𝗮𝗻𝘁𝗮𝗴𝗲𝘀 are that it requires a specific WebSocket server implementation, and older browsers don't support it.
+
+An excellent example of using WebSockets is chat applications or data visualization dashboards or maps, where we must show real-time data values.
+
+𝟯. 𝗦𝗲𝗿𝘃𝗲𝗿-𝗦𝗲𝗻𝘁 𝗘𝘃𝗲𝗻𝘁𝘀 (𝗦𝗦𝗘) is a technique that uses the standard HTTP protocol to push real-time updates from the server to the client. It works by keeping an HTTP connection open and streaming updates as they occur. Unlike WebSockets, SSE is unidirectional, meaning the client cannot send messages back to the server.
+
+The 𝗮𝗱𝘃𝗮𝗻𝘁𝗮𝗴𝗲 of SSE is that it is built on top of the standard HTTP protocol, making it easy to implement. It is more efficient than long polling and is supported by most browsers. 𝗗𝗶𝘀𝗮𝗱𝘃𝗮𝗻𝘁𝗮𝗴𝗲𝘀 are that it is unidirectional, does not keep sending messages from the client to the server, and doesn't support binary data.
+
+The best way to use Server-Sent events is when sending data from client to server is unnecessary. E.g., some status updates or push notifications
+
 
 MOBILE OPTIMIZATIONS - 
 

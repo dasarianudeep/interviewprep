@@ -69,6 +69,10 @@ function limit(func, n) {
   }
 }
 
+// https://skilled.dev/course/throttle
+// https://blog.webdevsimplified.com/2022-03/debounce-vs-throttle/
+
+
 // function throttle(func, wait = 0) {
 //   let shouldThrottle = false;
 
@@ -146,6 +150,52 @@ function throttle(cb, delay = 1000) {
     setTimeout(timeoutFunc, delay)
   }
 }
+
+function createCounter() {
+ 
+  let count = 0
+
+  const obj = {
+    count: 0
+  }
+
+  Object.defineProperty(obj, 'count', {
+    get: function() {
+      return count++
+    }
+  })
+
+  return obj
+}
+
+function createCounter() {
+  let currentCount = 0
+  return {
+    get count() {
+      return currentCount++
+    }
+  }
+}
+
+  const count = (function(){
+    let num = 0;
+    const val = () => ++num;
+    val.reset = () => num = 0;
+    return val;
+  })()
+
+  console.log(count());
+  console.log(count());
+  console.log(count());
+  console.log(count());
+
+  count.reset();
+
+  console.log(count());
+  console.log(count());
+  console.log(count());
+  console.log(count());
+
 
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -228,6 +278,59 @@ function debounce (func, wait, option = {leading: false, trailing: true}) {
       }
       timerId = null;
     }, wait )
+  }
+}
+
+function throttle(func, wait, option = {leading: true, trailing: true}) {
+  let lastArgs = null;
+  let waiting = null;
+
+  function setTimer() {
+    waiting = null;
+    if (lastArgs && option.trailing) {
+      func.apply(this, lastArgs);
+      lastArgs = null;
+      waiting = setTimeout(setTimer, wait);
+    }
+  }
+
+  return (...args) => {
+    if (waiting) {
+      lastArgs = args;
+      return;
+    }
+
+    if (option.leading) {
+      func.apply(this, args);
+    }
+    waiting = setTimeout(setTimer, wait);
+  }
+}
+
+function throttleII(func, wait, option = {leading: true, trailing: true}) {
+  const { leading, trailing} = option
+  let shouldWait = false
+  let prevArgs = null
+  let timer = () => setTimeout(()=>{
+        shouldWait = false
+        if (prevArgs && trailing){
+          func(...prevArgs)
+          shouldWait = true
+          prevArgs = null;
+          timer();
+        }
+  },wait);
+
+  return function(args){
+    if(!shouldWait){
+      if(leading){
+        func(...args);
+      }
+      shouldWait = true;
+      timer();
+    }else{
+      prevArgs = args
+    }
   }
 }
 
@@ -473,6 +576,248 @@ function invertBinaryTree (node) {
     return node;
 }
 
+function spyOn(obj, methodName) {
+  const calls = []
+
+  const originMethod = obj[methodName]
+  
+  if (typeof originMethod !== 'function') {
+    throw new Error('not function')
+  }
+  
+  obj[methodName] = function(...args) {
+    calls.push(args)
+    return originMethod.apply(this, args)
+  }
+  
+  return {
+    calls
+  }
+}
+
+class Middleware {
+  constructor() {
+    this.middlewarsOk = [];
+    this.middlewarsErrors = [];
+  }
+  /**
+   * @param {MiddlewareFunc} func
+   */
+  use(func) {
+    if (func.length === 3) {
+      this.middlewarsErrors.push(func);
+    }
+    if (func.length === 2) {
+      this.middlewarsOk.push(func);
+    }
+  }
+
+  /**
+   * @param {Request} req
+   */
+  start(req) {
+    const next = (error) => {
+      let args = error ? [error, req, next] : [req, next];
+      const func = error ? this.middlewarsErrors.shift() : this.middlewarsOk.shift();
+
+      try {
+        if (func) {
+          func(...args)
+        }
+      } catch (err) {
+        next(err);
+      }
+    }
+
+    next();
+  }
+}
+
+const middleware = new Middleware()
+
+// throw an error at first function
+middleware.use((req, next) => {
+  req.a = 1
+  throw new Error('sth wrong')
+  // or `next(new Error('sth wrong'))`
+})
+
+// since error occurs, this is skipped
+middleware.use((req, next) => {
+  req.b = 2
+})
+
+// since error occurs, this is skipped
+middleware.use((req, next) => {
+  console.log(req)
+})
+
+// since error occurs, this is called
+middleware.use((error, req, next) => {
+  console.log(error)
+  console.log(req)
+})
+
+middleware.start({})
+
+class MiddlewareII {
+  /**
+   * @param {MiddlewareFunc} func
+   */
+  constructor() {
+    // Create a function queue to help with execution
+    this.funcs = [];
+    this.req = null;
+  }
+  use(func) {
+    // Push the function into Queue
+    this.funcs.push(func);
+  }
+
+  /**
+   * @param {Request} req
+   */
+  start(req) {
+    this.req = req;
+    // Start the chain
+    this.next();
+  }
+
+  next = (err) => {
+    // take out the function to execute from the queue
+    const toExecute = this.funcs.shift();
+    // Catch execution error when a function throw an error
+    try {
+      // args length tells us if its a normal call or an error call
+      if (toExecute.length === 2) {
+        // there is no error, execute the function with current request and next()
+        if (!err) {
+          toExecute(this.req, this.next);
+        }
+        // There is an error, call next() immediately for error handling. This will now keep on dequeuing funs queue 
+        // till we get an error handler function with 3 args 
+        else{
+          this.next(err);
+        }
+      }
+      // There's an error and now we got a func with more than 2 args, i.e. an error handler
+      else {
+        toExecute(err, this.req, this.next);
+      }
+    }
+    catch (e) {
+      this.next(e);
+    }
+
+  }
+}
+
+
+function spyOn(obj, methodName) {
+  let calls = [];
+  obj[methodName] = new Proxy(obj[methodName], {
+    apply: (targetFn, context, args) => {
+      calls.push(args);
+      return targetFn.apply(context, args);
+    }
+  });
+  return {
+    calls
+  }
+}
+
+function clearAllTimeout() {
+  // your code here
+  let id = setTimeout(null, 0);
+  while(id>=0){
+    window.clearTimeout(id);
+    id--;
+  }
+}
+
+var timers = [];
+var originClearTimeOut = window.setTimeout;
+window.setTimeout = (...args)=>{
+  var timerId = originClearTimeOut(...args);
+  timers.push(timerId);
+  return timerId;
+}
+function clearAllTimeout() {
+  // your code here
+  timers.forEach(t=>window.clearTimeout(t));
+}
+
+function completeAssign(target, ...sources) {
+  if (target === null || target === undefined) {
+    throw new Error('target is Not an object!')  
+  }
+  target = new Object(target);
+  for (const source of sources) {
+    if (!source) {
+      continue;
+    }
+    Object.defineProperties(target, Object.getOwnPropertyDescriptors(source))
+  }
+  return target
+}
+
+function objectAssign(target, ...sources) {
+  
+  // Make sure target is not null or undefined
+  if (target == null)  throw new Error('Target is null or undefined'); 
+
+  // Turn primitives like boolean, number, string into an object
+  target = Object(target);
+
+  for (let source of sources) {
+    // Skips the source if it is null or undefined
+    if (source == null) continue;
+
+      // Get all properties + their descriptors or the source (to check later if they are enumerable)
+      const descriptors = Object.getOwnPropertyDescriptors(source)
+      
+      // Create an array of all keys from the descriptors
+      const keys = Object.keys(descriptors).concat(Object.getOwnPropertySymbols(descriptors))
+      
+        keys.forEach(k => {
+        // Check if the target has the same property as the source. If it has, and the property is not writable, throw an Exception.
+        const targetProp = Object.getOwnPropertyDescriptor(target, k) 
+        if (targetProp && !targetProp.writable) throw new Error(`Property ${k} is not writable`)
+
+        // If the property on the source is enumerable, asign it to the target
+        if (descriptors[k].enumerable) target[k] = source[k]; 
+    })
+  }
+  return target;
+}
+
+(function() {
+  if (typeof Object.assign != 'function') {
+      (function () {
+          Object.assign = function (target) {
+              'use strict';
+              if (target === undefined || target === null) {
+                  throw new TypeError('Cannot convert undefined or null to object');
+              }
+
+              var output = Object(target);
+              for (var index = 1; index < arguments.length; index++) {
+                  var source = arguments[index];
+                  if (source !== undefined && source !== null) {
+                      for (var nextKey in source) {
+                          if (source.hasOwnProperty(nextKey)) {
+                              output[nextKey] = source[nextKey];
+                          }
+                      }
+                  }
+              }
+              return output;
+          };
+      })();
+  }
+})();
+
+
 function MyObjectCreate(proto) {
     if (proto === null || typeof proto !== object) throw Error();
 
@@ -499,6 +844,24 @@ function BFSDOMTraversal(root) {
     return result;
 }
 
+  const levelOrder = (root)=> {
+    if(!root) return []
+    let res=[]
+    let q=[root]
+
+    while(q.length){
+        let temp=[]
+        let currLength = q.length
+        for (let i = 0; i < currLength; i++) {
+            const node = q.shift()
+            temp.push(node.val)
+            q.push(...node.children)
+        }
+        res.push(temp);
+    }
+    return res;
+    
+  };
 // function firstDuplicate(nums) {
 //     const obj = {};
 
@@ -1027,6 +1390,52 @@ function semverCompare(v1, v2) {
 
   return 0;
 }
+  function addComma(num) {
+    // your code here
+    let [number, decimal] = num.toString().split('.');
+    let str = '';
+    let i = number.length-1;
+    let count = 0;
+    while( i >= 0){
+    str = number[i]+ str;
+    count++;
+      if(i > 0 && count % 3 === 0){
+      str = ',' + str;
+    } 
+    i--; 
+    }
+    return decimal ?  str + "." + decimal : str
+
+  }
+
+  function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  }
+  
+  function rgbToHex(r, g, b) {
+    const  componentToHex = c => {
+      var hex = c.toString(16);
+      return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+  }
+
+  let timer = null;
+  function mySetInterval(func, delay, period) {
+    // your code here
+    let counter = 0;
+      function helper() {
+        timer = setTimeout(() => {
+          func();
+          counter++;
+            helper(); 
+        }, (delay+ (period*counter)));
+      }
+    helper();
+  }
+
 
   function undefinedToNull (arg) {
     if (arg === undefined) {
@@ -1442,6 +1851,41 @@ window.myLocalStorage = {
   },  
   clear(){
     localStorage.clear();
+  }
+}
+
+window.myLocalStorage = {
+  getItem(key) {
+    try {
+      const {value, maxAge, createdAt} = JSON.parse(localStorage.getItem(key))
+      
+      if (maxAge !== undefined && Date.now() - createdAt >= maxAge) {
+        this.removeItem(key)
+        return null
+      }
+      
+      return value
+    } catch (e) {
+      return null
+    }    
+  },
+  
+  setItem(key, value, maxAge) {
+    const entry = {
+      value,
+      maxAge,
+      createdAt: Date.now()
+    }
+    
+    localStorage.setItem(key, JSON.stringify(entry))
+  },
+  
+  removeItem(key) {
+    return localStorage.removeItem(key)
+  },
+  
+  clear() {
+    localStorage.clear()
   }
 }
 
@@ -2295,6 +2739,72 @@ document.addEventListener("DOMContentLoaded", function() {
     // Possibly fall back to event handlers here
   }
 });
+
+// Event Delegation
+
+const on = (selector, eventType, childSelector, eventHandler) => {
+  const elements = document.querySelectorAll(selector)
+  for (element of elements) {
+    element.addEventListener(eventType, eventOnElement => {
+      if (eventOnElement.target.matches(childSelector)) {
+        eventHandler(eventOnElement)
+      }
+    })
+  }
+}
+
+
+const allHandlers = new Map()
+function onClick(root, predicate, handler) {
+  if (allHandlers.has(root)) {
+    allHandlers.get(root).push([predicate, handler])
+    return
+  }
+
+  allHandlers.set(root, [[predicate, handler]])
+
+  // attach the real handler
+  root.addEventListener('click', function(e) {
+
+    // from e.target -> root
+    // check if element shoulded applied witht handler
+
+    let el = e.target
+    const handlers = allHandlers.get(root)
+    let isPropagationStopped = false
+
+    e.stopPropagation = () => {
+      isPropagationStopped = true
+    }
+
+    while (el) {
+      
+      let isImmediatePropagationStopped = false
+
+      e.stopImmediatePropagation = () => {
+        isImmediatePropagationStopped = true
+        isPropagationStopped = true
+      }
+
+      for (const [predicate, handler] of handlers) {
+        if (predicate(el)) {
+          handler.call(el, e)
+
+          // check immediatepropagtion
+          if (isImmediatePropagationStopped) {
+            break
+          }
+        }
+      }
+
+      // check propagation
+      if (el === root || isPropagationStopped) break
+
+      el = el.parentElement
+    }
+
+  }, false)
+}
 
 async function fetchWithTimeout(resource, options = {}) {
   const { timeout = 8000 } = options;

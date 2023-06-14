@@ -1,0 +1,63 @@
+XSS - Cross-Site Scripting
+---------------------------
+- Cross-Site Scripting (XSS) attacks are a type of injection, in which malicious scripts are injected into 
+ trusted websites.
+
+
+Cross-Site Scripting (XSS) attacks occur when:
+
+- Data enters a Web application through an untrusted source, most frequently a web request.
+- The data is included in dynamic content that is sent to a web user without being validated for malicious content.
+
+XSS Prevention - 
+* Applications must validate and sanitize data input to the web application from user browsers.
+Sanitizing consists of removing any unsafe character from user inputs.
+* All output from the web application to user browsers must be encoded.
+* Output Encoding is recommended when you need to safely display data exactly as a user typed it in. 
+* Cookie Attributes - HttpOnly - Change how JS and browsers can interact with cookies.
+
+- Output encoding converts untrusted input into a safe form where the input is displayed as data to the user without executing as 
+code in the browser.
+
+https://github.com/cure53/DOMPurify, https://github.com/apostrophecms/sanitize-html, https://jsxss.com/en/index.html
+
+
+- Content-Security-Policy header allows you to restrict which resources (such as JavaScript, CSS, Images, etc.) can be loaded, 
+and the URLs that they can be loaded from.
+
+CSRF - Cross-Site Request Forgery
+----------------------------------
+- CSRF is an attack that forces authenticated users to submit a request to a Web application against which they are currently authenticated. 
+
+
+ClickJacking
+------------------
+Clickjacking is an attack in which a user is tricked into clicking on actionable content on a hidden website by clicking on 
+some other content in a decoy website.
+
+Prevention -
+* Use X-Frame-Options header
+    X-Frame-Options: DENY
+    X-Frame-Options: SAMEORIGIN
+* Use CSP header
+    Content-Security-Policy: frame-ancestors 'none';
+    Content-Security-Policy: frame-ancestors 'self' *.somesite.com https://myfriend.site.com;
+* SameSite cookies - Cookies with SameSite attribute of either strict or lax will not be included in requests made to a page within an <iframe>
+
+Third Party Assets
+---------------------
+
+* Use Subresource Integrity (SRI)
+    <script integrity="sha256-hfkfhkfbkjfwdfndwfjbsf" crossorigin="anonymous" src="../"></script>
+
+MITM attacks
+---------------
+SSL  Upgrade - TLS 1.2
+
+HTTPs Downgrade 
+-------------------
+Defending against HTTPs Downgrade
+- Content-Security-Policy: upgrade-insecure-requests
+Bad Certificate
+- SNI extension to TLS
+Prevention - Strict-Transport-Security: max-age: 31536000, includeSubDomains
